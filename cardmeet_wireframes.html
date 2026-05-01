@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CardMeet — v1 Wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #14141a;
+    --ink-2: #3a3a45;
+    --muted: #767685;
+    --line: #e6e6ec;
+    --paper: #f7f6f2;
+    --paper-2: #fbfaf6;
+    --accent: #2c4cff;
+    --accent-soft: #e8edff;
+    --good: #15803d;
+    --good-soft: #d6f0de;
+    --warn: #92400e;
+    --warn-soft: #fef0c7;
+    --bad: #991b1b;
+    --bad-soft: #fde2e2;
+    --phone-bg: #ffffff;
+    --shadow: 0 1px 2px rgba(20, 20, 26, 0.04), 0 8px 24px rgba(20, 20, 26, 0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 56px 32px 80px;
+    line-height: 1.5;
+    font-size: 14px;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(20,20,26,0.06) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  .wrap { max-width: 1280px; margin: 0 auto; }
+
+  .doc-header {
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 32px;
+  }
+
+  .doc-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .doc-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 56px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .doc-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .doc-sub {
+    font-size: 16px;
+    color: var(--ink-2);
+    max-width: 720px;
+    line-height: 1.6;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .meta-row span strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* SECTION HEADERS (per screen) */
+  .screen-section {
+    margin-bottom: 72px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+  .screen-section.reverse {
+    grid-template-columns: 1fr 320px;
+  }
+
+  .screen-section .phone-wrap {
+    position: sticky;
+    top: 32px;
+  }
+
+  .screen-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .screen-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin-bottom: 16px;
+  }
+
+  .screen-blurb {
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 24px;
+    max-width: 560px;
+  }
+
+  .annotations {
+    list-style: none;
+    counter-reset: anno;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    max-width: 560px;
+  }
+  .annotations li {
+    counter-increment: anno;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--line);
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+  .annotations li:last-child { border-bottom: none; }
+  .annotations li::before {
+    content: counter(anno, decimal-leading-zero);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    padding-top: 2px;
+  }
+  .annotations strong { color: var(--ink); font-weight: 600; }
+
+  /* PHONE FRAME */
+  .phone {
+    width: 320px;
+    height: 660px;
+    background: var(--phone-bg);
+    border: 1.5px solid var(--ink);
+    border-radius: 36px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .phone-status {
+    height: 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink);
+    flex-shrink: 0;
+    background: var(--phone-bg);
+  }
+  .phone-status .right span { margin-left: 4px; }
+
+  .phone-header {
+    padding: 12px 20px 14px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .phone-header h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .phone-header .sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .phone-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px 20px;
+  }
+  .phone-body::-webkit-scrollbar { display: none; }
+
+  .phone-tabbar {
+    height: 56px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    background: var(--phone-bg);
+    flex-shrink: 0;
+  }
+  .phone-tabbar .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-size: 9.5px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .phone-tabbar .tab.active { color: var(--accent); }
+  .ti {
+    width: 18px; height: 18px;
+    display: inline-block;
+    border: 1.5px solid currentColor;
+    border-radius: 4px;
+  }
+  .ti-c { border-radius: 50%; }
+  .ti-d { transform: rotate(45deg); border-radius: 2px; width: 14px; height: 14px; }
+
+  /* COMMON UI */
+  .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .input {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1;
+  }
+  .btn-primary { background: var(--ink); color: white; }
+  .btn-secondary { background: var(--paper); color: var(--ink); border: 1px solid var(--line); }
+  .btn-accent { background: var(--accent); color: white; }
+  .btn-ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent-soft); }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { flex: 1; }
+  .full { width: 100%; }
+
+  .pill {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 100px;
+    background: var(--paper);
+    color: var(--ink-2);
+    font-weight: 500;
+    text-transform: uppercase;
+    border: 1px solid var(--line);
+  }
+  .pill-good { background: var(--good-soft); color: var(--good); border-color: transparent; }
+  .pill-warn { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+  .pill-bad { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
+  .pill-accent { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+  .stack-sm { gap: 8px; }
+
+  /* ========== SCREEN 1: ONBOARDING ========== */
+  .onb-radius {
+    text-align: center;
+    padding: 24px 16px 16px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+  .onb-radius .num {
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .onb-radius .unit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .slider {
+    height: 4px;
+    background: var(--line);
+    border-radius: 100px;
+    position: relative;
+    margin: 16px 4px;
+  }
+  .slider-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 32%;
+    background: var(--ink);
+    border-radius: 100px;
+  }
+  .slider-thumb {
+    position: absolute; top: 50%; left: 32%;
+    transform: translate(-50%, -50%);
+    width: 18px; height: 18px;
+    background: var(--ink);
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .game-chip {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin: 0 6px 6px 0;
+    background: white;
+  }
+  .game-chip.on {
+    background: var(--ink);
+    color: white;
+    border-color: var(--ink);
+  }
+
+  /* ========== SCREEN 2: CALENDAR ========== */
+  .conv {
+    padding: 14px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .conv-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .conv-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 16px;
+    margin: 4px 0 2px;
+    letter-spacing: -0.01em;
+  }
+  .conv-loc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .rsvp {
+    display: flex;
+    gap: 6px;
+  }
+  .rsvp-btn {
+    flex: 1;
+    padding: 7px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    font-size: 11px;
+    font-weight: 600;
+    background: white;
+    color: var(--muted);
+    text-align: center;
+    cursor: pointer;
+  }
+  .rsvp-btn.on-going { background: var(--good-soft); color: var(--good); border-color: var(--good); }
+  .rsvp-btn.on-maybe { background: var(--warn-soft); color: var(--warn); border-color: var(--warn); }
+
+  /* ========== SCREEN 3: BROWSE ========== */
+  .filter-bar {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 12px;
+  }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .fp {
+    padding: 7px 12px;
+    border-radius: 100px;
+    background: white;
+    color: var(--ink-2);
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border: 1px solid var(--line);
+  }
+  .fp.on {
+    background: var(--ink);
+    color: white;
+    border-color: var(--ink);
+  }
+  .listing {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .listing-img {
+    width: 56px;
+    height: 78px;
+    background: linear-gradient(135deg, #d4d4dc, #b8b8c4);
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: white;
+    text-align: center;
+  }
+  .listing-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .listing-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .listing-set { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .listing-price {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 4px;
+    letter-spacing: -0.01em;
+  }
+  .listing-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--accent);
+    margin-top: auto;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+
+  /* ========== SCREEN 4: LISTING DETAIL ========== */
+  .big-card {
+    width: 100%;
+    aspect-ratio: 5 / 7;
+    background: linear-gradient(135deg, #2a2a3e, #4a3a6e);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.5);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+    max-height: 220px;
+  }
+  .price-big {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .price-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
+  .seller-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--paper);
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+  .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c4b8a8, #968878);
+    flex-shrink: 0;
+  }
+  .seller-name { font-weight: 600; font-size: 13px; }
+  .seller-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .stars { color: #f59e0b; letter-spacing: 1px; font-size: 11px; }
+  .shared-banner {
+    background: var(--accent-soft);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+  .shared-banner .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .shared-banner p { font-size: 12px; color: var(--ink); }
+  .shared-banner strong { font-weight: 600; }
+
+  /* ========== SCREEN 5: MY DEALS ========== */
+  .deal-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--line);
+    margin: -4px -20px 14px;
+    padding: 0 20px;
+  }
+  .deal-tab {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .deal-tab.on { color: var(--ink); border-bottom-color: var(--ink); }
+  .deal {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .turn-banner {
+    background: var(--warn-soft);
+    color: var(--warn);
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .turn-banner.theirs {
+    background: var(--paper);
+    color: var(--muted);
+  }
+  .turn-banner .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .deal-body {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .deal-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+  .deal-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ========== SCREEN 6: OFFER CHAIN ========== */
+  .offer-body { background: var(--paper); }
+  .offer-divider {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    margin: 10px 0 12px;
+  }
+  .offer-msg {
+    padding: 12px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    max-width: 78%;
+  }
+  .offer-mine {
+    background: var(--ink);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+  }
+  .offer-theirs {
+    background: white;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
+  }
+  .offer-from {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .offer-price-big {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .offer-note {
+    font-size: 11px;
+    margin-top: 6px;
+    opacity: 0.85;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .offer-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    margin-top: 6px;
+    opacity: 0.6;
+    letter-spacing: 0.06em;
+  }
+  .offer-cta-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+
+  /* ========== SCREEN 7: MEETUP ========== */
+  .meetup-hero {
+    background: var(--ink);
+    color: white;
+    border-radius: 16px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .meetup-hero::after {
+    content: "";
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(44,76,255,0.6), transparent 70%);
+    border-radius: 50%;
+  }
+  .meetup-hero .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .meetup-hero .name {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .meetup-hero .when {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+  .meetup-detail {
+    background: var(--paper);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .meetup-detail .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .meetup-detail .val {
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .meetup-other {
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 14px;
+    font-size: 11.5px;
+    color: var(--ink-2);
+  }
+  .meetup-other .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .meetup-other ul { list-style: none; }
+  .meetup-other li { padding: 3px 0; line-height: 1.4; }
+  .meetup-other li::before { content: "·  "; color: var(--muted); }
+
+  .footnote {
+    font-size: 10.5px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 10px 2px;
+  }
+
+  /* ========== ENDING SUMMARY ========== */
+  .summary {
+    margin-top: 80px;
+    padding: 40px;
+    background: var(--ink);
+    color: white;
+    border-radius: 24px;
+  }
+  .summary h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .summary p {
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 24px;
+    max-width: 640px;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 24px;
+  }
+  .summary-cell {
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 14px;
+  }
+  .summary-cell .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(44,76,255,0.9);
+    letter-spacing: 0.16em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .summary-cell .h {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 17px;
+    margin-bottom: 6px;
+  }
+  .summary-cell p {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    .screen-section, .screen-section.reverse {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .screen-section .phone-wrap { position: static; }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc-header">
+    <div class="doc-eyebrow">Spec · Wireframes · v1.0</div>
+    <h1 class="doc-title">CardMeet <em>— meet at the convention you were already going to.</em></h1>
+    <p class="doc-sub">A coordination layer for in-person card-game sales. Buyers and sellers don't agree on a meetup spot — they discover that they'll both be at the same tournament, and the deal happens there. Eight core screens, one structured offer model, and a commitment-window-based reputation system designed to kill the no-show problem.</p>
+    <div class="meta-row">
+      <span><strong>Platform</strong> &nbsp;React Native / Flutter</span>
+      <span><strong>Scope</strong> &nbsp;Sales only (v1)</span>
+      <span><strong>Payments</strong> &nbsp;Cash at meetup</span>
+      <span><strong>Screens</strong> &nbsp;8 core flows</span>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       SCREEN 1 — ONBOARDING
+       ============================================================ -->
+  <section class="screen-section">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><div class="right"><span>5G</span><span>•••</span><span>▮▮</span></div></div>
+        <div class="phone-header">
+          <h2>Set your reach</h2>
+          <div class="sub">Step 2 of 3</div>
+        </div>
+        <div class="phone-body">
+          <div class="label">Your location</div>
+          <div class="input" style="margin-bottom: 18px;">📍 &nbsp;Tel Aviv, Israel</div>
+
+          <div class="label">How far will you travel?</div>
+          <div class="onb-radius">
+            <div class="num">75</div>
+            <div class="unit">kilometers</div>
+          </div>
+          <div class="slider">
+            <div class="slider-fill"></div>
+            <div class="slider-thumb"></div>
+          </div>
+          <div class="slider-labels">
+            <span>5 KM</span><span>500 KM</span>
+          </div>
+
+          <div class="label" style="margin-top: 22px;">Games you play</div>
+          <div>
+            <span class="game-chip on">Magic: TG</span>
+            <span class="game-chip on">Pokémon</span>
+            <span class="game-chip">Yu-Gi-Oh!</span>
+            <span class="game-chip">Lorcana</span>
+            <span class="game-chip">Flesh & Blood</span>
+          </div>
+
+          <button class="btn btn-primary full" style="margin-top: 24px;">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="screen-num">Screen 01</div>
+      <h2 class="screen-title">Onboarding — define the reach</h2>
+      <p class="screen-blurb">Three questions: where you live, how far you'll travel, and what you play. These three answers fully populate the rest of the app — your calendar, your discovery feed, your match suggestions. Set once at signup, editable in settings.</p>
+
+      <ul class="annotations">
+        <li><span><strong>Location is the anchor.</strong> Use device GPS by default but make it editable — many users live in one city and play in another. Store as lat/lng, not as a string.</span></li>
+        <li><span><strong>Reach is asymmetric to event size.</strong> A user might travel 5 km for FNM and 300 km for a Grand Prix. v1 uses a single radius; v2 should let users set per-event-tier reach.</span></li>
+        <li><span><strong>Game selection filters everything.</strong> A Pokémon-only player should never see a Magic-only convention in their calendar. Multi-select.</span></li>
+        <li><span><strong>No account creation friction.</strong> This screen sits between basic signup and a "see your calendar" reveal — by step 3 the user already sees value (real conventions populated nearby).</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN 2 — CALENDAR
+       ============================================================ -->
+  <section class="screen-section reverse">
+    <div>
+      <div class="screen-num">Screen 02</div>
+      <h2 class="screen-title">Calendar — your conventions, your RSVPs</h2>
+      <p class="screen-blurb">The calendar isn't decorative. Every Going / Maybe / No tap directly drives the matchmaking algorithm: a "Going" RSVP says "find me listings I can pick up here." Without RSVPs, the app has no signal — so the UI keeps RSVP one-tap and visible.</p>
+
+      <ul class="annotations">
+        <li><span><strong>RSVP is binary at the data layer.</strong> Three states (Going, Maybe, No) but only "Going" weighs fully in matching. "Maybe" is a soft signal — surfaced, deprioritized.</span></li>
+        <li><span><strong>"+ Add a convention" is essential for v1.</strong> You'll have sparse data on day one. User submissions, lightly moderated, fill the calendar faster than scraping ever could.</span></li>
+        <li><span><strong>Distance shown per event.</strong> Helps users decide whether a far event is worth the trip — and reinforces that the radius is doing real work.</span></li>
+        <li><span><strong>Date format is local + relative.</strong> "SAT · MAY 9" reads faster than "9/5/2026" and reduces locale confusion across regions.</span></li>
+      </ul>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><div class="right"><span>5G</span><span>•••</span><span>▮▮</span></div></div>
+        <div class="phone-header">
+          <h2>My conventions</h2>
+          <div class="sub">8 events in 75 km · MTG, Pokémon</div>
+        </div>
+        <div class="phone-body">
+          <div class="stack">
+            <div class="conv">
+              <div class="conv-date">Sat · May 9</div>
+              <div class="conv-name">FNM at Freaks</div>
+              <div class="conv-loc">📍 Tel Aviv · 4 km</div>
+              <div class="rsvp">
+                <div class="rsvp-btn on-going">Going</div>
+                <div class="rsvp-btn">Maybe</div>
+                <div class="rsvp-btn">No</div>
+              </div>
+            </div>
+
+            <div class="conv">
+              <div class="conv-date">Sun · May 17</div>
+              <div class="conv-name">Pokémon Regional Cup</div>
+              <div class="conv-loc">📍 Herzliya · 12 km</div>
+              <div class="rsvp">
+                <div class="rsvp-btn">Going</div>
+                <div class="rsvp-btn on-maybe">Maybe</div>
+                <div class="rsvp-btn">No</div>
+              </div>
+            </div>
+
+            <div class="conv">
+              <div class="conv-date">Fri–Sun · May 22–24</div>
+              <div class="conv-name">GP Tel Aviv 2026</div>
+              <div class="conv-loc">📍 Expo TLV · 8 km</div>
+              <div class="rsvp">
+                <div class="rsvp-btn on-going">Going</div>
+                <div class="rsvp-btn">Maybe</div>
+                <div class="rsvp-btn">No</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-ghost full" style="margin-top: 14px;">+ Add a convention</button>
+        </div>
+        <div class="phone-tabbar">
+          <div class="tab"><span class="ti"></span>Browse</div>
+          <div class="tab active"><span class="ti ti-c"></span>Calendar</div>
+          <div class="tab"><span class="ti ti-d"></span>Deals</div>
+          <div class="tab"><span class="ti ti-c"></span>Profile</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN 3 — BROWSE
+       ============================================================ -->
+  <section class="screen-section">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><div class="right"><span>5G</span><span>•••</span><span>▮▮</span></div></div>
+        <div class="phone-header">
+          <h2>Browse</h2>
+          <div class="sub">142 active listings near you</div>
+        </div>
+        <div class="phone-body">
+          <div class="filter-bar">
+            <span class="fp on">📅 Shared con</span>
+            <span class="fp">MTG</span>
+            <span class="fp">Pokémon</span>
+            <span class="fp">Under ₪100</span>
+            <span class="fp">Newest</span>
+          </div>
+
+          <div class="stack stack-sm">
+            <div class="listing">
+              <div class="listing-img">CARD<br/>ART</div>
+              <div class="listing-meta">
+                <div class="listing-name">Liliana of the Veil</div>
+                <div class="listing-set">Innistrad · NM</div>
+                <div class="listing-price">₪260</div>
+                <div class="listing-tag">📅 BOTH @ GP TEL AVIV</div>
+              </div>
+            </div>
+
+            <div class="listing">
+              <div class="listing-img">CARD<br/>ART</div>
+              <div class="listing-meta">
+                <div class="listing-name">Charizard ex 199</div>
+                <div class="listing-set">Obsidian Flames · LP</div>
+                <div class="listing-price">₪180</div>
+                <div class="listing-tag">📅 BOTH @ FNM AT FREAKS</div>
+              </div>
+            </div>
+
+            <div class="listing">
+              <div class="listing-img">CARD<br/>ART</div>
+              <div class="listing-meta">
+                <div class="listing-name">Ragavan, Pilferer</div>
+                <div class="listing-set">MH2 · NM</div>
+                <div class="listing-price">₪320</div>
+                <div class="listing-tag">📅 BOTH @ GP TEL AVIV</div>
+              </div>
+            </div>
+
+            <div class="listing">
+              <div class="listing-img">CARD<br/>ART</div>
+              <div class="listing-meta">
+                <div class="listing-name">Solitude</div>
+                <div class="listing-set">MH2 · NM</div>
+                <div class="listing-price">₪240</div>
+                <div class="listing-tag">📅 BOTH @ POKÉMON REGIONAL</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tabbar">
+          <div class="tab active"><span class="ti"></span>Browse</div>
+          <div class="tab"><span class="ti ti-c"></span>Calendar</div>
+          <div class="tab"><span class="ti ti-d"></span>Deals</div>
+          <div class="tab"><span class="ti ti-c"></span>Profile</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="screen-num">Screen 03</div>
+      <h2 class="screen-title">Browse — surface only what's actually completable</h2>
+      <p class="screen-blurb">The "Shared con" filter is the killer feature of v1. By default, the feed shows listings whose seller you'll cross paths with at a convention you've already RSVP'd to. Other filters layer on top. This is the discovery experience competitors can't replicate without your data.</p>
+
+      <ul class="annotations">
+        <li><span><strong>Shared-con tag is shown per listing.</strong> Even when a user removes the filter, the badge keeps reminding them which deals are frictionless to complete.</span></li>
+        <li><span><strong>Listing card shows price, condition, set.</strong> No fluff. The card image is small because most users recognize cards by name + set, not art.</span></li>
+        <li><span><strong>Sort defaults to "Recommended"</strong> (shared-con first, then proximity, then recency). "Newest" is available as an explicit sort for power users hunting fresh listings.</span></li>
+        <li><span><strong>Card name search is missing here</strong> — it lives behind a search bar that pins to the top of the body when scrolling. Card-name search is the second-most-common entry point after the convention filter.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN 4 — LISTING DETAIL
+       ============================================================ -->
+  <section class="screen-section reverse">
+    <div>
+      <div class="screen-num">Screen 04</div>
+      <h2 class="screen-title">Listing detail — trust signals up front</h2>
+      <p class="screen-blurb">Three things have to be visible before a buyer commits to negotiation: <em>what is the card</em>, <em>can I trust this seller</em>, and <em>can we actually meet</em>. The seller's no-show count appears next to their rating. The shared-convention banner removes the "where do we meet?" question before it's asked.</p>
+
+      <ul class="annotations">
+        <li><span><strong>No-show count is a first-class metric</strong> alongside rating. Hiding it would be a moral failure of the design — a seller's reliability matters more than their friendliness.</span></li>
+        <li><span><strong>Two CTAs: Buy at asking, or Make offer.</strong> Accepting the asking price skips negotiation entirely and creates a match immediately. This is critical — negotiation is friction, not fun, for most buyers.</span></li>
+        <li><span><strong>"Make offer" opens a structured form, not a chat.</strong> Form has price (required), optional note, and an explicit "submit offer" — it's an event, not a message.</span></li>
+        <li><span><strong>Photos paginate horizontally below the hero image.</strong> Multiple angles matter for condition assessment. No photo, no listing — enforce in the upload flow.</span></li>
+      </ul>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><div class="right"><span>5G</span><span>•••</span><span>▮▮</span></div></div>
+        <div class="phone-header">
+          <h2>Liliana of the Veil</h2>
+          <div class="sub">Innistrad · Near Mint</div>
+        </div>
+        <div class="phone-body">
+          <div class="big-card">CARD &nbsp; PHOTO</div>
+
+          <div class="price-big">₪260</div>
+          <div class="price-meta">Listed 2 days ago</div>
+
+          <div class="seller-card">
+            <div class="avatar"></div>
+            <div style="flex: 1;">
+              <div class="seller-name">Daniel R.</div>
+              <div class="seller-meta">
+                <span class="stars">★★★★★</span>
+                <span>4.9 · 23 deals · 0 no-shows</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="shared-banner">
+            <div class="lbl">📅 Shared convention</div>
+            <p>You're both attending <strong>GP Tel Aviv</strong> · May 22–24</p>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-secondary">Make offer</button>
+            <button class="btn btn-primary">Buy at ₪260</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN 5 — MY DEALS
+       ============================================================ -->
+  <section class="screen-section">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><div class="right"><span>5G</span><span>•••</span><span>▮▮</span></div></div>
+        <div class="phone-header">
+          <h2>My Deals</h2>
+        </div>
+        <div class="phone-body">
+          <div class="deal-tabs">
+            <div class="deal-tab on">Negotiating · 3</div>
+            <div class="deal-tab">Matched · 1</div>
+            <div class="deal-tab">Scheduled · 2</div>
+          </div>
+
+          <div class="stack">
+            <div class="deal">
+              <div class="turn-banner"><span class="dot"></span>Your turn — they countered ₪240</div>
+              <div class="deal-body">
+                <div>
+                  <div class="deal-title">Liliana of the Veil</div>
+                  <div class="deal-meta">to Daniel R. · asking ₪260</div>
+                </div>
+                <span class="pill pill-warn">Buying</span>
+              </div>
+            </div>
+
+            <div class="deal">
+              <div class="turn-banner theirs"><span class="dot"></span>Waiting on Maya — sent 2h ago</div>
+              <div class="deal-body">
+                <div>
+                  <div class="deal-title">Charizard ex</div>
+                  <div class="deal-meta">your offer ₪150</div>
+                </div>
+                <span class="pill pill-warn">Buying</span>
+              </div>
+            </div>
+
+            <div class="deal">
+              <div class="turn-banner"><span class="dot"></span>Your turn — Yael offered ₪200</div>
+              <div class="deal-body">
+                <div>
+                  <div class="deal-title">Ragavan</div>
+                  <div class="deal-meta">your listing · asking ₪320</div>
+                </div>
+                <span class="pill pill-good">Selling</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tabbar">
+          <div class="tab"><span class="ti"></span>Browse</div>
+          <div class="tab"><span class="ti ti-c"></span>Calendar</div>
+          <div class="tab active"><span class="ti ti-d"></span>Deals</div>
+          <div class="tab"><span class="ti ti-c"></span>Profile</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="screen-num">Screen 05</div>
+      <h2 class="screen-title">My Deals — three states, one ball-in-court</h2>
+      <p class="screen-blurb">This screen is the answer to your problem #3 — messages getting lost in chat. Every active deal has exactly one question: <em>is it your turn or theirs?</em> The turn banner tells you instantly. No reading scroll-back, no missing a message buried under twenty others.</p>
+
+      <ul class="annotations">
+        <li><span><strong>Negotiating / Matched / Scheduled</strong> are the three lifecycle stages. Completed deals live in a separate Profile → History view to keep this screen focused on action.</span></li>
+        <li><span><strong>Turn banner uses warning yellow when it's your turn</strong>, neutral grey when waiting. Color carries the urgency; the text confirms it.</span></li>
+        <li><span><strong>Buying vs Selling pills</strong> let users see at a glance which side they're on without reading the body text. Critical for power users with many active deals.</span></li>
+        <li><span><strong>Tab counts double as notification numbers.</strong> Push notifications fire on state transitions: counter received, offer accepted, meetup confirmed, meetup reminder.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN 6 — OFFER CHAIN
+       ============================================================ -->
+  <section class="screen-section reverse">
+    <div>
+      <div class="screen-num">Screen 06</div>
+      <h2 class="screen-title">Offer chain — structured negotiation, not chat</h2>
+      <p class="screen-blurb">Each offer is a discrete object: a price, an optional note, a timestamp, and a state. Both parties see the same chain. At any moment exactly one person has actions available: Accept, Counter, or Withdraw. There is no parallel conversation that can be missed.</p>
+
+      <ul class="annotations">
+        <li><span><strong>Optional note per offer</strong> preserves the human texture of negotiation ("noticed slight whitening, ₪220?") without turning the channel into a chat. Notes attach to offers, not to a free-form thread.</span></li>
+        <li><span><strong>The action card always shows the legal moves only.</strong> If it's not your turn, the card shows "Waiting on Daniel" with a Withdraw option. The interface never lets a user accidentally double-respond.</span></li>
+        <li><span><strong>Offers expire after 72h of inactivity</strong> (configurable). This prevents zombie deals from cluttering the My Deals screen and keeps social pressure on responders.</span></li>
+        <li><span><strong>"Withdraw" is always available to either party.</strong> If a buyer changes their mind mid-negotiation, they can exit cleanly without ghosting — preserving the relationship for future deals.</span></li>
+      </ul>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><div class="right"><span>5G</span><span>•••</span><span>▮▮</span></div></div>
+        <div class="phone-header">
+          <h2>Liliana of the Veil</h2>
+          <div class="sub">Negotiating with Daniel R.</div>
+        </div>
+        <div class="phone-body offer-body">
+          <div class="offer-divider">May 1 · 14:22</div>
+
+          <div class="offer-msg offer-theirs">
+            <div class="offer-from">Daniel listed</div>
+            <div class="offer-price-big">₪260</div>
+            <div class="offer-time">Asking price</div>
+          </div>
+
+          <div class="offer-msg offer-mine">
+            <div class="offer-from">You offered</div>
+            <div class="offer-price-big">₪220</div>
+            <div class="offer-note">"Slight whitening on back corner"</div>
+            <div class="offer-time">Sent · 2h ago</div>
+          </div>
+
+          <div class="offer-msg offer-theirs">
+            <div class="offer-from">Daniel countered</div>
+            <div class="offer-price-big">₪240</div>
+            <div class="offer-time" style="color: var(--accent); font-weight: 600;">⚡ Your turn</div>
+          </div>
+
+          <div class="offer-cta-card">
+            <div class="label">Respond</div>
+            <div class="btn-row" style="margin-bottom: 8px;">
+              <button class="btn btn-primary">Accept ₪240</button>
+              <button class="btn btn-secondary">Counter</button>
+            </div>
+            <button class="btn btn-ghost full">Withdraw</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN 7 — MEETUP
+       ============================================================ -->
+  <section class="screen-section">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><div class="right"><span>5G</span><span>•••</span><span>▮▮</span></div></div>
+        <div class="phone-header">
+          <h2>You matched with Daniel</h2>
+          <div class="sub">Liliana of the Veil · ₪240</div>
+        </div>
+        <div class="phone-body">
+          <div class="meetup-hero">
+            <div class="lbl">Suggested meetup</div>
+            <div class="name">GP Tel Aviv 2026</div>
+            <div class="when">Sat May 23 · You're both going</div>
+          </div>
+
+          <div class="meetup-detail">
+            <div class="lbl">Window (commitment)</div>
+            <div class="val">Saturday, May 23 · 13:00 – 13:30</div>
+          </div>
+
+          <div class="meetup-detail">
+            <div class="lbl">Where at venue</div>
+            <div class="val">Trade Hall · near registration</div>
+          </div>
+
+          <div class="footnote">You're committing to a 30-min window. The no-show counter only triggers if you fail to show during that window — not based on whether you're at the convention overall.</div>
+
+          <div class="btn-row">
+            <button class="btn btn-secondary">Edit</button>
+            <button class="btn btn-primary">Confirm meetup</button>
+          </div>
+
+          <div class="meetup-other">
+            <div class="lbl">Other options</div>
+            <ul>
+              <li>FNM at Freaks (May 9) — only Daniel going</li>
+              <li>Propose a custom location</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="screen-num">Screen 07</div>
+      <h2 class="screen-title">Match → Meetup — the moment everything converges</h2>
+      <p class="screen-blurb">The instant terms are agreed, the app runs the shared-convention query and presents the strongest match: an event both users marked "Going" to. The pair commits to a 30-minute window — not a single instant — to absorb the natural messiness of convention attendance. The no-show counter only fires if someone fails to honor that window.</p>
+
+      <ul class="annotations">
+        <li><span><strong>Best-case is auto-suggested.</strong> If multiple shared conventions exist, pick the soonest one with both as "Going." Tie-break by proximity to today.</span></li>
+        <li><span><strong>Time defaults to a sensible mid-day slot.</strong> Either party can edit. Both must confirm before the meetup is locked in.</span></li>
+        <li><span><strong>"Where at venue" is a free-text field</strong> for v1. v2 should use a venue-specific picker (Trade Hall, Registration, Food Court) maintained by the convention organizer.</span></li>
+        <li><span><strong>No-shared-convention path</strong> is reachable via "Other options → Propose a custom location" — covers the edge case where buyer/seller want the deal but have no overlap.</span></li>
+        <li><span><strong>Reminder push at T-15min</strong> opens a check-in screen for both parties: "Are you at the venue?" Both must check in within their committed window. The window — not convention attendance — defines no-show.</span></li>
+        <li><span><strong>Why a window, not a single time?</strong> People show up late, leave early, or are at conventions all day. A 30-min window absorbs normal variance while still creating a real commitment to honor.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN 8 — CHECK-IN
+       ============================================================ -->
+  <section class="screen-section reverse">
+    <div>
+      <div class="screen-num">Screen 08</div>
+      <h2 class="screen-title">Check-in — the only moment that defines a no-show</h2>
+      <p class="screen-blurb">Triggered by push 15 minutes before the committed window opens. Both parties tap a single button: <em>I'm here</em>. The counter starts only if a user fails to check in by the end of their window. Whether they came to the convention at all, when they left, or how long they stayed is irrelevant — the only commitment that matters is the one they made.</p>
+
+      <ul class="annotations">
+        <li><span><strong>Single tap, no friction.</strong> Geofence verification is intentionally out of scope for v1 — trust the user, escalate via reputation if they lie.</span></li>
+        <li><span><strong>"Running late" extends the window by 10 min, once.</strong> Mutually agreed. If the other side declines, the original window stands.</span></li>
+        <li><span><strong>End of window = ruling moment.</strong> If both checked in: deal completes when one taps "Done." If only one checked in: the other gets a no-show. If neither: the deal is voided, no penalty.</span></li>
+        <li><span><strong>Post-meetup confirmation</strong> follows immediately for users who checked in: "Did the deal happen? Rate the other party." Drives the rating system.</span></li>
+      </ul>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-status"><span>12:45</span><div class="right"><span>5G</span><span>•••</span><span>▮▮</span></div></div>
+        <div class="phone-header">
+          <h2>Window opens in 15 min</h2>
+          <div class="sub">GP Tel Aviv · Trade Hall</div>
+        </div>
+        <div class="phone-body">
+          <div class="meetup-hero">
+            <div class="lbl">Your committed window</div>
+            <div class="name">13:00 – 13:30</div>
+            <div class="when">Daniel R. · Liliana of the Veil · ₪240</div>
+          </div>
+
+          <div class="meetup-detail">
+            <div class="lbl">Where</div>
+            <div class="val">Trade Hall · near registration</div>
+          </div>
+
+          <div style="background: var(--accent-soft); border-radius: 12px; padding: 14px; margin: 14px 0;">
+            <div class="label" style="color: var(--accent); margin-bottom: 6px;">Tap when you arrive</div>
+            <button class="btn btn-accent full" style="margin-bottom: 8px;">📍 I'm here</button>
+            <button class="btn btn-secondary full">Running late · ask for +10 min</button>
+          </div>
+
+          <div class="meetup-detail" style="background: white; border: 1px solid var(--line);">
+            <div class="lbl">Daniel's status</div>
+            <div class="val" style="color: var(--good);">✓ Checked in 2 min ago</div>
+          </div>
+
+          <div class="footnote">If you don't check in by 13:30, this counts as a no-show on your profile. You can cancel before the window opens with no penalty.</div>
+
+          <button class="btn btn-ghost full" style="margin-top: 8px;">Cancel meetup</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SUMMARY
+       ============================================================ -->
+  <section class="summary">
+    <h2>How the screens map to your three problems</h2>
+    <p>The wireframes aren't just feature checklists — each one closes a specific failure mode in the current social-media-chat status quo.</p>
+    <div class="summary-grid">
+      <div class="summary-cell">
+        <div class="num">Problem 01</div>
+        <div class="h">Coordination requires both parties to be online</div>
+        <p>Solved by the convention layer (Screens 02, 04, 07). The app proposes a shared meetup async; users only need to confirm, not negotiate timing.</p>
+      </div>
+      <div class="summary-cell">
+        <div class="num">Problem 02</div>
+        <div class="h">No-shows leave sellers hanging</div>
+        <p>Solved by visible no-show counts (Screen 04) + post-meetup confirmation flow + automatic reputation impact. Bad actors lose visibility fast.</p>
+      </div>
+      <div class="summary-cell">
+        <div class="num">Problem 03</div>
+        <div class="h">Bargaining gets lost in chat</div>
+        <p>Solved by structured offers (Screens 05, 06). Each offer is a discrete object with one ball-in-court. No threads to scroll, no messages to miss.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

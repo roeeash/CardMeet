@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CardMeet — meet at the convention you were already going to</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #14141a;
+    --ink-2: #3a3a45;
+    --muted: #767685;
+    --line: #e6e6ec;
+    --paper: #f7f6f2;
+    --paper-2: #fbfaf6;
+    --accent: #2c4cff;
+    --accent-soft: #e8edff;
+    --good: #15803d;
+    --good-soft: #d6f0de;
+    --warn: #92400e;
+    --warn-soft: #fef0c7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { overflow-x: hidden; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============== NAV ============== */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(247, 246, 242, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-mark {
+    width: 26px;
+    height: 26px;
+    background: var(--ink);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    transform: rotate(-4deg);
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    font-size: 14px;
+  }
+  .nav-links a {
+    color: var(--ink-2);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    background: var(--ink);
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+  }
+
+  /* ============== HERO ============== */
+  .hero {
+    padding: 80px 32px 0;
+    max-width: 1280px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-eyebrow::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(40px, 6vw, 76px);
+    line-height: 1.0;
+    letter-spacing: -0.035em;
+    margin-bottom: 24px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink-2);
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--ink-2);
+    line-height: 1.55;
+    max-width: 520px;
+    margin-bottom: 36px;
+  }
+  .hero-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    max-width: 480px;
+  }
+  .hero-form input {
+    flex: 1;
+    padding: 16px 20px;
+    border-radius: 100px;
+    border: 1.5px solid var(--line);
+    background: white;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .hero-form input:focus { border-color: var(--ink); }
+  .hero-form button {
+    padding: 16px 28px;
+    border-radius: 100px;
+    background: var(--ink);
+    color: white;
+    border: none;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.1s;
+  }
+  .hero-form button:hover { transform: translateY(-1px); }
+  .hero-trust {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-trust .dot {
+    width: 6px; height: 6px;
+    background: var(--good);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(21, 128, 61, 0.15);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(21, 128, 61, 0.15); }
+    50% { box-shadow: 0 0 0 8px rgba(21, 128, 61, 0.05); }
+  }
+
+  /* ============== HERO PHONE STACK ============== */
+  .phone-stack {
+    position: relative;
+    height: 560px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .phone-stack .phone {
+    position: absolute;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .phone-stack .phone-1 {
+    transform: translateX(-110px) translateY(20px) rotate(-8deg);
+    z-index: 1;
+    opacity: 0.65;
+  }
+  .phone-stack .phone-2 {
+    transform: translateX(0) translateY(0) rotate(0deg);
+    z-index: 3;
+  }
+  .phone-stack .phone-3 {
+    transform: translateX(110px) translateY(20px) rotate(8deg);
+    z-index: 2;
+    opacity: 0.85;
+  }
+  .phone-stack:hover .phone-1 {
+    transform: translateX(-150px) translateY(10px) rotate(-12deg);
+  }
+  .phone-stack:hover .phone-3 {
+    transform: translateX(150px) translateY(10px) rotate(12deg);
+  }
+
+  .deco {
+    position: absolute;
+    pointer-events: none;
+  }
+  .deco-1 {
+    top: 80px;
+    right: -40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    transform: rotate(8deg);
+    letter-spacing: 0.08em;
+  }
+  .deco-2 {
+    bottom: 60px;
+    left: -50px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--muted);
+    transform: rotate(-4deg);
+  }
+
+  /* ============== PHONE FRAME (shared) ============== */
+  .phone {
+    width: 280px;
+    height: 540px;
+    background: white;
+    border: 1.5px solid var(--ink);
+    border-radius: 36px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(20, 20, 26, 0.06), 0 24px 48px rgba(20, 20, 26, 0.12);
+    flex-shrink: 0;
+  }
+  .phone-status {
+    height: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  .phone-header {
+    padding: 10px 18px 12px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .phone-header h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .phone-header .sub {
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .phone-body {
+    flex: 1;
+    padding: 14px 18px;
+    overflow: hidden;
+  }
+
+  /* ============== PHONE CONTENT (mini versions) ============== */
+  .mini-conv {
+    padding: 12px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .mini-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .mini-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 14px;
+    margin: 3px 0 2px;
+  }
+  .mini-loc { font-size: 10px; color: var(--muted); margin-bottom: 8px; }
+  .mini-rsvp { display: flex; gap: 4px; }
+  .mini-rsvp-btn {
+    flex: 1;
+    padding: 5px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    font-size: 9.5px;
+    font-weight: 600;
+    background: white;
+    color: var(--muted);
+    text-align: center;
+  }
+  .mini-rsvp-btn.on { background: var(--good-soft); color: var(--good); border-color: var(--good); }
+
+  .mini-hero {
+    background: var(--ink);
+    color: white;
+    border-radius: 14px;
+    padding: 14px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .mini-hero::after {
+    content: "";
+    position: absolute;
+    right: -30px; top: -30px;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(44,76,255,0.5), transparent 70%);
+    border-radius: 50%;
+  }
+  .mini-hero .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .mini-hero .nm {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .mini-hero .wn { font-size: 11px; opacity: 0.8; margin-top: 4px; }
+
+  .mini-detail {
+    background: var(--paper);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .mini-detail .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .mini-detail .val { font-size: 11px; font-weight: 500; }
+
+  .mini-offer {
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    max-width: 80%;
+  }
+  .mini-offer-mine {
+    background: var(--ink);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+  }
+  .mini-offer-theirs {
+    background: var(--paper);
+    color: var(--ink);
+    border-bottom-left-radius: 4px;
+  }
+  .mini-offer .from {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 3px;
+  }
+  .mini-offer .pr {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* ============== PROBLEM/SOLUTION ============== */
+  .problems {
+    padding: 120px 32px 80px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 64px;
+    max-width: 720px;
+  }
+  .section-title em { font-style: italic; color: var(--ink-2); font-weight: 400; }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    overflow: hidden;
+  }
+  .problem-cell {
+    background: var(--paper);
+    padding: 36px 32px;
+  }
+  .problem-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    letter-spacing: 0.16em;
+    font-weight: 600;
+  }
+  .problem-h {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    margin-bottom: 16px;
+  }
+  .problem-p {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .problem-arrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .problem-arrow::before {
+    content: "→";
+    font-size: 14px;
+  }
+  .problem-fix {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  /* ============== HOW IT WORKS ============== */
+  .how {
+    padding: 80px 32px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    counter-reset: step;
+  }
+  .how-step { counter-increment: step; }
+  .how-step::before {
+    content: counter(step, decimal-leading-zero);
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    display: block;
+    margin-bottom: 16px;
+    letter-spacing: -0.04em;
+  }
+  .how-step h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .how-step p {
+    font-size: 13.5px;
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+
+  /* ============== SCREENS PREVIEW ============== */
+  .screens-section {
+    padding: 80px 32px 100px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .screens-marquee {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding: 24px 0 32px;
+    scrollbar-width: none;
+  }
+  .screens-marquee::-webkit-scrollbar { display: none; }
+  .screen-item {
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .screen-item-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .screen-item-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ============== SIGNUP SECTION ============== */
+  .signup {
+    background: var(--ink);
+    color: white;
+    padding: 120px 32px;
+    margin-top: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .signup::before {
+    content: "";
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(44, 76, 255, 0.4), transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .signup-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .signup .section-eyebrow { color: rgba(255,255,255,0.5); }
+  .signup h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(40px, 6vw, 72px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  .signup h2 em { font-style: italic; color: rgba(255,255,255,0.6); font-weight: 400; }
+  .signup-sub {
+    font-size: 17px;
+    color: rgba(255,255,255,0.7);
+    max-width: 520px;
+    margin: 0 auto 40px;
+    line-height: 1.55;
+  }
+
+  .auth-form {
+    background: white;
+    color: var(--ink);
+    border-radius: 24px;
+    padding: 36px;
+    max-width: 440px;
+    margin: 0 auto;
+    text-align: left;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+  }
+  .auth-form h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: -0.015em;
+    margin-bottom: 6px;
+  }
+  .auth-form .sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .auth-field { margin-bottom: 14px; }
+  .auth-field label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .auth-field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .auth-field input:focus { border-color: var(--ink); }
+  .auth-submit {
+    width: 100%;
+    padding: 14px;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.1s;
+  }
+  .auth-submit:hover { transform: translateY(-1px); }
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .auth-divider::before,
+  .auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .auth-social {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .auth-social-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: white;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .auth-social-btn:hover { border-color: var(--ink); }
+  .auth-switch {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+  .auth-switch a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+  /* ============== FOOTER ============== */
+  footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.5);
+    padding: 40px 32px 32px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em;
+  }
+
+  /* ============== RESPONSIVE ============== */
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .phone-stack { height: 480px; }
+    .problem-grid { grid-template-columns: 1fr; }
+    .how-steps { grid-template-columns: repeat(2, 1fr); }
+    .nav-links a:not(.nav-cta) { display: none; }
+  }
+  @media (max-width: 540px) {
+    .how-steps { grid-template-columns: 1fr; }
+    .phone-stack .phone-1, .phone-stack .phone-3 { display: none; }
+    .hero-form { flex-direction: column; }
+    .hero-form button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== NAV ============== -->
+<nav>
+  <div class="logo">
+    <div class="logo-mark">C</div>
+    CardMeet
+  </div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#problems">Why it works</a>
+    <a href="#signup" class="nav-cta">Sign up</a>
+  </div>
+</nav>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow">Trades & sales for card players</div>
+      <h1>Meet at the convention <em>you were already going to.</em></h1>
+      <p class="hero-sub">CardMeet finds the tournaments, FNMs, and conventions in your reach — then matches you with sellers who'll be at the same one. No flaky chats, no DM tag, no buyer ghosting after they said yes.</p>
+
+      <form class="hero-form" onsubmit="document.getElementById('signup').scrollIntoView({behavior:'smooth'}); return false;">
+        <input type="email" placeholder="you@example.com" />
+        <button type="submit">Get early access</button>
+      </form>
+
+      <div class="hero-trust">
+        <span class="dot"></span>
+        <span>v1 launching for Magic, Pokémon, Yu-Gi-Oh! and Lorcana</span>
+      </div>
+    </div>
+
+    <div class="phone-stack">
+      <div class="deco deco-1">↑ The convention<br/>you both attend</div>
+      <div class="deco deco-2">your turn ↗</div>
+
+      <!-- PHONE 1: Calendar (left) -->
+      <div class="phone phone-1">
+        <div class="phone-status"><span>9:41</span><span>5G •••</span></div>
+        <div class="phone-header">
+          <h2>My conventions</h2>
+          <div class="sub">8 events in 75 km</div>
+        </div>
+        <div class="phone-body">
+          <div class="mini-conv">
+            <div class="mini-date">Sat · May 9</div>
+            <div class="mini-name">FNM at Freaks</div>
+            <div class="mini-loc">📍 Tel Aviv · 4 km</div>
+            <div class="mini-rsvp">
+              <div class="mini-rsvp-btn on">Going</div>
+              <div class="mini-rsvp-btn">Maybe</div>
+              <div class="mini-rsvp-btn">No</div>
+            </div>
+          </div>
+          <div class="mini-conv">
+            <div class="mini-date">May 22–24</div>
+            <div class="mini-name">GP Tel Aviv</div>
+            <div class="mini-loc">📍 Expo TLV · 8 km</div>
+            <div class="mini-rsvp">
+              <div class="mini-rsvp-btn on">Going</div>
+              <div class="mini-rsvp-btn">Maybe</div>
+              <div class="mini-rsvp-btn">No</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHONE 2: Match (center) -->
+      <div class="phone phone-2">
+        <div class="phone-status"><span>9:41</span><span>5G •••</span></div>
+        <div class="phone-header">
+          <h2>You matched with Daniel</h2>
+          <div class="sub">Liliana of the Veil · ₪240</div>
+        </div>
+        <div class="phone-body">
+          <div class="mini-hero">
+            <div class="lbl">Suggested meetup</div>
+            <div class="nm">GP Tel Aviv 2026</div>
+            <div class="wn">Sat May 23 · You're both going</div>
+          </div>
+          <div class="mini-detail">
+            <div class="lbl">Window</div>
+            <div class="val">May 23 · 13:00 – 13:30</div>
+          </div>
+          <div class="mini-detail">
+            <div class="lbl">Where</div>
+            <div class="val">Trade Hall · near reg.</div>
+          </div>
+          <button class="auth-submit" style="margin-top: 10px; padding: 10px; font-size: 12px;">Confirm meetup</button>
+        </div>
+      </div>
+
+      <!-- PHONE 3: Offer chain (right) -->
+      <div class="phone phone-3">
+        <div class="phone-status"><span>9:41</span><span>5G •••</span></div>
+        <div class="phone-header">
+          <h2>Liliana of the Veil</h2>
+          <div class="sub">Negotiating with Daniel</div>
+        </div>
+        <div class="phone-body" style="background: var(--paper);">
+          <div class="mini-offer mini-offer-theirs">
+            <div class="from">Daniel listed</div>
+            <div class="pr">₪260</div>
+          </div>
+          <div class="mini-offer mini-offer-mine">
+            <div class="from">You offered</div>
+            <div class="pr">₪220</div>
+          </div>
+          <div class="mini-offer mini-offer-theirs">
+            <div class="from">Daniel countered</div>
+            <div class="pr">₪240</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--accent); font-weight: 600; margin-top: 4px;">⚡ YOUR TURN</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PROBLEMS ============== -->
+<section class="problems" id="problems">
+  <div class="section-eyebrow">— The status quo is broken</div>
+  <h2 class="section-title">Selling cards online <em>shouldn't feel like chasing ghosts.</em></h2>
+
+  <div class="problem-grid">
+    <div class="problem-cell">
+      <div class="problem-num">PROBLEM 01</div>
+      <div class="problem-h">Coordinating in DMs requires both players to be online at once.</div>
+      <p class="problem-p">You message at 11pm. They reply at 8am. You're at work. They go to bed. By the time you're both online, the deal has cooled or someone else swooped in.</p>
+      <div class="problem-arrow">CardMeet's fix</div>
+      <p class="problem-fix">Conventions you've already RSVP'd to become async coordination points. The app proposes the meetup; both sides confirm on their own time.</p>
+    </div>
+
+    <div class="problem-cell">
+      <div class="problem-num">PROBLEM 02</div>
+      <div class="problem-h">Buyers ghost. Sellers are left holding cards.</div>
+      <p class="problem-p">You blocked off Saturday. They never showed. Did they back out? Forget? Find a better deal? You'll never know — and you sat at home with the cards instead of selling them to someone else.</p>
+      <div class="problem-arrow">CardMeet's fix</div>
+      <p class="problem-fix">Both parties commit to a 30-min window. Miss it, and a no-show is recorded on your profile — visible to every future seller before they accept your offer.</p>
+    </div>
+
+    <div class="problem-cell">
+      <div class="problem-num">PROBLEM 03</div>
+      <div class="problem-h">Bargaining in chat is a tangled mess.</div>
+      <p class="problem-p">"Wait, did you say ₪220 or ₪240?" Messages cross. Counter-offers get buried. Someone agrees to a price the other person already withdrew. Confusion ends in dropped sales.</p>
+      <div class="problem-arrow">CardMeet's fix</div>
+      <p class="problem-fix">Structured offers replace chat. Each price is a discrete card with one action available — accept, counter, or withdraw. There's never doubt about whose turn it is.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== HOW IT WORKS ============== -->
+<section class="how" id="how">
+  <div class="section-eyebrow">— How it works</div>
+  <h2 class="section-title">Four steps from <em>"I want this card"</em> to <em>"I have it."</em></h2>
+
+  <div class="how-steps">
+    <div class="how-step">
+      <h3>Set your reach</h3>
+      <p>Pick how far you'll travel and which games you play. Conventions in radius auto-fill your calendar.</p>
+    </div>
+    <div class="how-step">
+      <h3>RSVP to events</h3>
+      <p>Mark which conventions you'll attend. Your "Going" list becomes the matchmaking signal for every deal.</p>
+    </div>
+    <div class="how-step">
+      <h3>Offer or accept</h3>
+      <p>Browse listings. Hit the asking price or send a structured counter-offer. No chat, no ambiguity.</p>
+    </div>
+    <div class="how-step">
+      <h3>Meet at the con</h3>
+      <p>The app finds a convention you're both attending and locks in a 30-min window. Cash changes hands IRL.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SCREENS PREVIEW ============== -->
+<section class="screens-section">
+  <div class="section-eyebrow">— A peek inside</div>
+  <h2 class="section-title">Eight screens, <em>zero ambiguity.</em></h2>
+
+  <div class="screens-marquee">
+    <!-- Mini-screen: Browse -->
+    <div class="screen-item">
+      <div class="screen-item-label">Screen 03</div>
+      <div class="screen-item-title">Browse listings</div>
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><span>5G •••</span></div>
+        <div class="phone-header">
+          <h2>Browse</h2>
+          <div class="sub">142 listings near you</div>
+        </div>
+        <div class="phone-body">
+          <div style="display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap;">
+            <span style="padding: 5px 10px; border-radius: 100px; background: var(--ink); color: white; font-size: 9.5px; font-weight: 600;">📅 Shared con</span>
+            <span style="padding: 5px 10px; border-radius: 100px; background: white; color: var(--ink-2); font-size: 9.5px; font-weight: 500; border: 1px solid var(--line);">MTG</span>
+            <span style="padding: 5px 10px; border-radius: 100px; background: white; color: var(--ink-2); font-size: 9.5px; font-weight: 500; border: 1px solid var(--line);">Pokémon</span>
+          </div>
+          <div style="display: flex; gap: 10px; padding: 10px; background: white; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 6px;">
+            <div style="width: 44px; height: 62px; background: linear-gradient(135deg, #d4d4dc, #b8b8c4); border-radius: 4px; flex-shrink: 0;"></div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 13px;">Liliana of the Veil</div>
+              <div style="font-size: 10px; color: var(--muted);">Innistrad · NM</div>
+              <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; margin-top: 2px;">₪260</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--accent); font-weight: 600; margin-top: 2px;">📅 BOTH @ GP TEL AVIV</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; padding: 10px; background: white; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 6px;">
+            <div style="width: 44px; height: 62px; background: linear-gradient(135deg, #d4d4dc, #b8b8c4); border-radius: 4px; flex-shrink: 0;"></div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 13px;">Charizard ex</div>
+              <div style="font-size: 10px; color: var(--muted);">Obsidian · LP</div>
+              <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; margin-top: 2px;">₪180</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--accent); font-weight: 600; margin-top: 2px;">📅 BOTH @ FNM</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px; padding: 10px; background: white; border: 1px solid var(--line); border-radius: 10px;">
+            <div style="width: 44px; height: 62px; background: linear-gradient(135deg, #d4d4dc, #b8b8c4); border-radius: 4px; flex-shrink: 0;"></div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 13px;">Ragavan</div>
+              <div style="font-size: 10px; color: var(--muted);">MH2 · NM</div>
+              <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; margin-top: 2px;">₪320</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini-screen: My Deals -->
+    <div class="screen-item">
+      <div class="screen-item-label">Screen 05</div>
+      <div class="screen-item-title">My deals</div>
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><span>5G •••</span></div>
+        <div class="phone-header">
+          <h2>My Deals</h2>
+        </div>
+        <div class="phone-body">
+          <div style="display: flex; border-bottom: 1px solid var(--line); margin: -4px -18px 12px; padding: 0 18px;">
+            <div style="flex: 1; padding: 8px 0; text-align: center; font-size: 10.5px; font-weight: 600; color: var(--ink); border-bottom: 2px solid var(--ink); margin-bottom: -1px;">Negotiating · 3</div>
+            <div style="flex: 1; padding: 8px 0; text-align: center; font-size: 10.5px; font-weight: 600; color: var(--muted);">Matched · 1</div>
+            <div style="flex: 1; padding: 8px 0; text-align: center; font-size: 10.5px; font-weight: 600; color: var(--muted);">Scheduled · 2</div>
+          </div>
+          <div style="background: white; border: 1px solid var(--line); border-radius: 10px; padding: 11px; margin-bottom: 8px;">
+            <div style="background: var(--warn-soft); color: var(--warn); padding: 6px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; margin-bottom: 8px;">⚡ Your turn — countered ₪240</div>
+            <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px;">Liliana of the Veil</div>
+            <div style="font-size: 10px; color: var(--muted);">to Daniel R. · asking ₪260</div>
+          </div>
+          <div style="background: white; border: 1px solid var(--line); border-radius: 10px; padding: 11px; margin-bottom: 8px;">
+            <div style="background: var(--paper); color: var(--muted); padding: 6px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; margin-bottom: 8px;">⏳ Waiting on Maya — 2h</div>
+            <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px;">Charizard ex</div>
+            <div style="font-size: 10px; color: var(--muted);">your offer ₪150</div>
+          </div>
+          <div style="background: white; border: 1px solid var(--line); border-radius: 10px; padding: 11px;">
+            <div style="background: var(--warn-soft); color: var(--warn); padding: 6px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; margin-bottom: 8px;">⚡ Your turn — Yael offered ₪200</div>
+            <div style="font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px;">Ragavan</div>
+            <div style="font-size: 10px; color: var(--muted);">your listing · asking ₪320</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini-screen: Check-in -->
+    <div class="screen-item">
+      <div class="screen-item-label">Screen 08</div>
+      <div class="screen-item-title">Check-in window</div>
+      <div class="phone">
+        <div class="phone-status"><span>12:45</span><span>5G •••</span></div>
+        <div class="phone-header">
+          <h2>Window opens in 15 min</h2>
+          <div class="sub">GP Tel Aviv · Trade Hall</div>
+        </div>
+        <div class="phone-body">
+          <div class="mini-hero">
+            <div class="lbl">Your committed window</div>
+            <div class="nm">13:00 – 13:30</div>
+            <div class="wn">Daniel R. · Liliana · ₪240</div>
+          </div>
+          <div style="background: var(--accent-soft); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">Tap when you arrive</div>
+            <button style="width: 100%; padding: 11px; background: var(--accent); color: white; border: none; border-radius: 100px; font-family: inherit; font-size: 12px; font-weight: 600; margin-bottom: 6px;">📍 I'm here</button>
+            <button style="width: 100%; padding: 11px; background: white; color: var(--ink); border: 1px solid var(--line); border-radius: 100px; font-family: inherit; font-size: 11px; font-weight: 600;">Running late · +10 min</button>
+          </div>
+          <div style="background: white; border: 1px solid var(--line); padding: 10px; border-radius: 8px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 3px;">Daniel's status</div>
+            <div style="font-size: 11px; color: var(--good); font-weight: 600;">✓ Checked in 2 min ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mini-screen: Listing detail -->
+    <div class="screen-item">
+      <div class="screen-item-label">Screen 04</div>
+      <div class="screen-item-title">Listing detail</div>
+      <div class="phone">
+        <div class="phone-status"><span>9:41</span><span>5G •••</span></div>
+        <div class="phone-header">
+          <h2>Liliana of the Veil</h2>
+          <div class="sub">Innistrad · Near Mint</div>
+        </div>
+        <div class="phone-body">
+          <div style="width: 100%; aspect-ratio: 5/7; max-height: 160px; background: linear-gradient(135deg, #2a2a3e, #4a3a6e); border-radius: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em;">CARD PHOTO</div>
+          <div style="font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; line-height: 1;">₪260</div>
+          <div style="font-size: 10px; color: var(--muted); margin-top: 3px; margin-bottom: 12px;">Listed 2 days ago</div>
+          <div style="display: flex; align-items: center; gap: 9px; padding: 10px; background: var(--paper); border-radius: 10px; margin-bottom: 10px;">
+            <div style="width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #c4b8a8, #968878); flex-shrink: 0;"></div>
+            <div>
+              <div style="font-weight: 600; font-size: 12px;">Daniel R.</div>
+              <div style="font-size: 10px; color: var(--muted);"><span style="color: #f59e0b;">★★★★★</span> 4.9 · 23 deals · 0 no-shows</div>
+            </div>
+          </div>
+          <div style="background: var(--accent-soft); border-radius: 10px; padding: 10px; margin-bottom: 10px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-bottom: 3px;">📅 Shared convention</div>
+            <div style="font-size: 11px;">Both at <strong>GP Tel Aviv</strong> · May 22–24</div>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button style="flex: 1; padding: 10px; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 11px; font-weight: 600;">Make offer</button>
+            <button style="flex: 1; padding: 10px; background: var(--ink); color: white; border: none; border-radius: 8px; font-family: inherit; font-size: 11px; font-weight: 600;">Buy at ₪260</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align: center; font-size: 13px; color: var(--muted); margin-top: 20px;">
+    Scroll horizontally · See all 8 screens in the <a href="cardmeet_wireframes.html" style="color: var(--accent); font-weight: 600;">full wireframe spec ↗</a>
+  </p>
+</section>
+
+<!-- ============== SIGNUP ============== -->
+<section class="signup" id="signup">
+  <div class="signup-inner">
+    <div class="section-eyebrow">— Join the early access list</div>
+    <h2>Stop chasing buyers. <em>Start meeting them at the con.</em></h2>
+    <p class="signup-sub">CardMeet is launching v1 with Magic, Pokémon, Yu-Gi-Oh!, and Lorcana support. Sign up to be among the first 500 invited.</p>
+
+    <div class="auth-form">
+      <h3>Create your account</h3>
+      <p class="sub">Free during early access. No credit card.</p>
+
+      <div class="auth-social">
+        <button class="auth-social-btn">Google</button>
+        <button class="auth-social-btn">Apple</button>
+      </div>
+
+      <div class="auth-divider">or with email</div>
+
+      <form onsubmit="alert('Welcome to the waitlist!'); return false;">
+        <div class="auth-field">
+          <label for="name">Display name</label>
+          <input type="text" id="name" placeholder="How others will see you" required />
+        </div>
+        <div class="auth-field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="you@example.com" required />
+        </div>
+        <div class="auth-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="At least 8 characters" required minlength="8" />
+        </div>
+        <button type="submit" class="auth-submit">Create account</button>
+      </form>
+
+      <div class="auth-switch">
+        Already have an account? <a href="#">Sign in</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer>
+  CARDMEET · v1 · BUILT FOR PEOPLE WHO PLAY CARDS
+</footer>
+
+</body>
+</html>

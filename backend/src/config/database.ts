@@ -1,14 +1,14 @@
 import knex, { Knex } from 'knex';
 import dotenv from 'dotenv';
 import knexConfig from '../../knexfile';
-import { BaseModel } from '@models/BaseModel';
-import { UserModel, UserProfileModel } from '@models/user/User';
-import { EventModel, EventRSVPModel } from '@models/event/Event';
-import { ListingModel } from '@models/listing/Listing';
-import { DealModel } from '@models/deal/Deal';
-import { OfferModel } from '@models/deal/Offer';
-import { MeetupModel } from '@models/meetup/Meetup';
-import { ensureDatabaseExists } from '@scripts/init-database';
+import { BaseModel } from '../models/BaseModel';
+import { UserModel, UserProfileModel } from '../models/user/User';
+import { EventModel, EventRSVPModel } from '../models/event/Event';
+import { ListingModel } from '../models/listing/Listing';
+import { DealModel } from '../models/deal/Deal';
+import { OfferModel } from '../models/deal/Offer';
+import { MeetupModel } from '../models/meetup/Meetup';
+import { ensureDatabaseExists } from '../scripts/init-database';
 
 dotenv.config();
 

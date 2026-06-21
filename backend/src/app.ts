@@ -9,9 +9,9 @@ import path from 'node:path';
 
 dotenv.config();
 
-import { errorHandler } from '@middleware/errorHandler';
-import { requestLogger } from '@middleware/requestLogger';
-import { Database } from '@config/database';
+import { errorHandler } from './middleware/errorHandler';
+import { requestLogger } from './middleware/requestLogger';
+import { Database } from './config/database';
 
 // Initialise knex and wire all models
 Database.getInstance();
@@ -77,12 +77,12 @@ app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-import authRoutes from '@routes/auth';
-import eventRoutes from '@routes/events';
-import listingRoutes from '@routes/listings';
-import dealRoutes from '@routes/deals';
-import meetupRoutes from '@routes/meetups';
-import profileRoutes from '@routes/profile';
+import authRoutes from './routes/auth';
+import eventRoutes from './routes/events';
+import listingRoutes from './routes/listings';
+import dealRoutes from './routes/deals';
+import meetupRoutes from './routes/meetups';
+import profileRoutes from './routes/profile';
 
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/events', eventRoutes);

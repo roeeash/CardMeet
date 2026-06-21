@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { Database } from '@config/database';
+import { Database } from './config/database';
 import { server } from './app';
 
 dotenv.config();

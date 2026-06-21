@@ -1,5 +1,5 @@
 import { NotificationModel } from '../models/notification/Notification';
-import type { Notification, NotificationType } from '@shared/types/notification';
+import type { Notification, NotificationType } from '../../shared/types/notification';
 
 /**
  * NotificationService provides a no-op safe wrapper around notification creation.

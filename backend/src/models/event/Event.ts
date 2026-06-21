@@ -1,5 +1,5 @@
 import { BaseModel } from '../BaseModel';
-import { Event, EventRSVP, RSVPStatus } from '@shared/types/event';
+import { Event, EventRSVP, RSVPStatus } from '../../shared/types/event';
 
 export class EventModel extends BaseModel {
   static tableName = 'events';

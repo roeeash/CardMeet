@@ -7,11 +7,11 @@
  * - Timestamps remain as ISO 8601 Date objects (serialized to strings by JSON.stringify)
  */
 
-import { User, UserProfile } from '@shared/types/user';
-import { Deal } from '@shared/types/deal';
-import { Offer } from '@shared/types/offer';
-import { Event, EventRSVP } from '@shared/types/event';
-import { Meetup } from '@shared/types/meetup';
+import { User, UserProfile } from '../../shared/types/user';
+import { Deal } from '../../shared/types/deal';
+import { Offer } from '../../shared/types/offer';
+import { Event, EventRSVP } from '../../shared/types/event';
+import { Meetup } from '../../shared/types/meetup';
 
 /**
  * Convert a User from DB (snake_case) to API response (camelCase)

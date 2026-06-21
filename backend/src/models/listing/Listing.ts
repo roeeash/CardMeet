@@ -1,6 +1,6 @@
 import { BaseModel } from '../BaseModel';
-import { Listing, ListingStatus } from '@shared/types/listing';
-import { Game } from '@shared/types/user';
+import { Listing, ListingStatus } from '../../shared/types/listing';
+import { Game } from '../../shared/types/user';
 
 export class ListingModel extends BaseModel {
   static tableName = 'listings';

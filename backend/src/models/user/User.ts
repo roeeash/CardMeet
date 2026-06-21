@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { BaseModel } from '../BaseModel';
-import { User, UserProfile } from '@shared/types/user';
+import { User, UserProfile } from '../../shared/types/user';
 
 type UserRow = User & { password_hash: string };
 

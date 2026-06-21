@@ -12,19 +12,6 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "@controllers/*": ["./src/controllers/*"],
-      "@services/*": ["./src/services/*"],
-      "@models/*": ["./src/models/*"],
-      "@middleware/*": ["./src/middleware/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@config/*": ["./src/config/*"],
-      "@types/*": ["./src/types/*"],
-      "@routes/*": ["./src/routes/*"],
-      "@scripts/*": ["./src/scripts/*"],
-      "@shared/*": ["../shared/*"]
-    }
   },
   "include": [
     "src/**/*",

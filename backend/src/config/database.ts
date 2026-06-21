@@ -8,6 +8,7 @@ import { ListingModel } from '@models/listing/Listing';
 import { DealModel } from '@models/deal/Deal';
 import { OfferModel } from '@models/deal/Offer';
 import { MeetupModel } from '@models/meetup/Meetup';
+import { ensureDatabaseExists } from '@scripts/init-database';
 
 dotenv.config();
 
@@ -16,7 +17,6 @@ export class Database {
 
   static async ensureDatabase(): Promise<void> {
     try {
-      const { ensureDatabaseExists } = await import('../scripts/init-database');
       await ensureDatabaseExists();
       console.log('[Database] Bootstrap phase completed');
     } catch (error) {

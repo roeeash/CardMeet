@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { EventService } from '@services/EventService';
-import { authenticate, AuthRequest } from '@middleware/auth';
-import { getStatusCode, formatErrorResponse } from '@utils/errorHandler';
-import { validateRequest, rsvpSchema } from '@middleware/validation';
-import { eventToDTO, eventsToDTO, eventRsvpToDTO } from '@utils/dto';
+import { EventService } from '../services/EventService';
+import { authenticate, AuthRequest } from '../middleware/auth';
+import { getStatusCode, formatErrorResponse } from '../utils/errorHandler';
+import { validateRequest, rsvpSchema } from '../middleware/validation';
+import { eventToDTO, eventsToDTO, eventRsvpToDTO } from '../utils/dto';
 
 const router = Router();
 

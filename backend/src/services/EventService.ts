@@ -1,5 +1,5 @@
-import { EventModel, EventRSVPModel } from '@models/event/Event';
-import { UserProfileModel } from '@models/user/User';
+import { EventModel, EventRSVPModel } from '../models/event/Event';
+import { UserProfileModel } from '../models/user/User';
 import { RSVPStatus } from '@shared/types/event';
 
 export class EventService {

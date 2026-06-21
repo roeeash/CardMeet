@@ -92,7 +92,7 @@ export class MeetupModel extends BaseModel {
     // If status is transitioning to no_show, trigger reputation update
     if (status === 'no_show_buyer' || status === 'no_show_seller') {
       // Dynamically import to avoid circular dependency
-      const { MeetupService } = await import('@services/MeetupService');
+      const { MeetupService } = await import('../services/MeetupService');
       const noShowParty = status === 'no_show_buyer' ? 'buyer' : 'seller';
       try {
         await MeetupService.recordNoShow(meetupId, noShowParty);

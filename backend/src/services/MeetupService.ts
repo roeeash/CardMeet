@@ -1,6 +1,6 @@
-import { MeetupModel } from '@models/meetup/Meetup';
-import { DealModel } from '@models/deal/Deal';
-import { UserProfileModel } from '@models/user/User';
+import { MeetupModel } from '../models/meetup/Meetup';
+import { DealModel } from '../models/deal/Deal';
+import { UserProfileModel } from '../models/user/User';
 import { MeetupStatus } from '@shared/types/meetup';
 
 export class MeetupService {

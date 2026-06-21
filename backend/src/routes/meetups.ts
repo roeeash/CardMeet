@@ -1,10 +1,10 @@
 import { Router, Response } from 'express';
-import { MeetupService } from '@services/MeetupService';
-import { MeetupModel } from '@models/meetup/Meetup';
-import { authenticate, AuthRequest } from '@middleware/auth';
-import { getStatusCode, formatErrorResponse } from '@utils/errorHandler';
-import { validateRequest, scheduleMeetupSchema } from '@middleware/validation';
-import { meetupToDTO } from '@utils/dto';
+import { MeetupService } from '../services/MeetupService';
+import { MeetupModel } from '../models/meetup/Meetup';
+import { authenticate, AuthRequest } from '../middleware/auth';
+import { getStatusCode, formatErrorResponse } from '../utils/errorHandler';
+import { validateRequest, scheduleMeetupSchema } from '../middleware/validation';
+import { meetupToDTO } from '../utils/dto';
 
 const router = Router();
 
@@ -66,7 +66,7 @@ router.post('/:id/confirm', authenticate, async (req: AuthRequest, res: Response
     const dbMeetup = meetup as any;
 
     // Get the deal to find buyer and seller IDs
-    const { DealModel } = await import('@models/deal/Deal');
+    const { DealModel } = await import('../models/deal/Deal');
     const deal = await DealModel.getById(dbMeetup.deal_id);
     if (!deal) {
       return res.status(404).json({ error: 'Deal not found' });

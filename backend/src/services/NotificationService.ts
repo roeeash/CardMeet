@@ -1,4 +1,4 @@
-import { NotificationModel } from '@models/notification/Notification';
+import { NotificationModel } from '../models/notification/Notification';
 import type { Notification, NotificationType } from '@shared/types/notification';
 
 /**

@@ -1,8 +1,8 @@
-import { ListingModel } from '@models/listing/Listing';
-import { UserProfileModel } from '@models/user/User';
-import { EventService } from '@services/EventService';
+import { ListingModel } from '../models/listing/Listing';
+import { UserProfileModel } from '../models/user/User';
+import { EventService } from '../services/EventService';
 import { ListingStatus } from '@shared/types/listing';
-import { parseLatitude, parseLongitude, parseRadiusKm } from '@utils/validation';
+import { parseLatitude, parseLongitude, parseRadiusKm } from '../utils/validation';
 
 export class ListingService {
   static async getListings(userId: string, filters: any = {}) {

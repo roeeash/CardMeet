@@ -33,15 +33,6 @@ export async function up(knex: Knex): Promise<void> {
     table.index(['games']);
   });
 
-  // Add PostGIS extension for geospatial queries
-  await knex.raw('CREATE EXTENSION IF NOT EXISTS postgis');
-  
-  // Add geospatial index for user locations
-  await knex.raw(`
-    CREATE INDEX idx_user_profiles_location 
-    ON user_profiles 
-    USING GIST (ST_Point(location_lng, location_lat))
-  `);
 }
 
 export async function down(knex: Knex): Promise<void> {

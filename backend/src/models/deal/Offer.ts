@@ -1,6 +1,5 @@
-import { Knex } from 'knex';
 import { BaseModel } from '../BaseModel';
-import { Offer, OfferStatus } from '@shared/types/offer';
+import { Offer } from '@shared/types/offer';
 
 export class OfferModel extends BaseModel {
   static tableName = 'offers';
@@ -83,6 +82,18 @@ export class OfferModel extends BaseModel {
       .where('deal_id', dealId)
       .where('from_user_id', userId)
       .where('status', 'active')
+      .first();
+  }
+
+  static async findByDealId(dealId: string): Promise<Offer[]> {
+    return this.db(this.tableName)
+      .where('deal_id', dealId)
+      .orderBy('created_at', 'asc');
+  }
+
+  static async getById(offerId: string): Promise<Offer | null> {
+    return this.db(this.tableName)
+      .where('id', offerId)
       .first();
   }
 }

@@ -1,6 +1,6 @@
-import { Knex } from 'knex';
 import { BaseModel } from '../BaseModel';
-import { Listing, Game, ListingStatus } from '@shared/types/listing';
+import { Listing, ListingStatus } from '@shared/types/listing';
+import { Game } from '@shared/types/user';
 
 export class ListingModel extends BaseModel {
   static tableName = 'listings';
@@ -19,7 +19,13 @@ export class ListingModel extends BaseModel {
     } = {}
   ): Promise<Listing[]> {
     let query = this.db(this.tableName)
-      .select('listings.*')
+      .select(
+        'listings.*',
+        'user_profiles.display_name as seller_name',
+        'user_profiles.rating as seller_rating',
+        'user_profiles.completed_deals as seller_deals',
+        'user_profiles.no_shows as seller_no_shows'
+      )
       .join('user_profiles', 'listings.seller_id', 'user_profiles.user_id')
       .where('listings.status', 'active')
       .where('listings.seller_id', '!=', userId);
@@ -31,13 +37,16 @@ export class ListingModel extends BaseModel {
 
     // Location filter
     if (filters.locationLat && filters.locationLng && filters.radiusKm) {
-      query = query.whereRaw(`
-        ST_DWithin(
-          ST_Point(user_profiles.location_lng, user_profiles.location_lat)::geography,
-          ST_Point(?, ?)::geography,
-          ?
-        )
-      `, [filters.locationLng, filters.locationLat, filters.radiusKm * 1000]);
+      // MVP: Use simple lat/lng range checks instead of PostGIS
+      // Phase 3 will implement precise geographic distance calculations
+      const latDelta = filters.radiusKm / 111; // Approx km per degree latitude
+      const lngDelta = filters.radiusKm / (111 * Math.cos(filters.locationLat * Math.PI / 180)); // Approx km per degree longitude
+
+      query = query
+        .where('user_profiles.location_lat', '>=', filters.locationLat - latDelta)
+        .where('user_profiles.location_lat', '<=', filters.locationLat + latDelta)
+        .where('user_profiles.location_lng', '>=', filters.locationLng - lngDelta)
+        .where('user_profiles.location_lng', '<=', filters.locationLng + lngDelta);
     }
 
     // Price range
@@ -56,16 +65,18 @@ export class ListingModel extends BaseModel {
     // Shared events filter
     if (filters.sharedEventsOnly) {
       query = query.whereExists(function() {
+        // MVP: Use simple lat/lng range checks instead of PostGIS for location matching
+        // Phase 3 will implement precise geographic distance calculations
+        const latDelta = filters.radiusKm! / 111; // Approx km per degree latitude
+        const lngDelta = filters.radiusKm! / (111 * Math.cos(filters.locationLat! * Math.PI / 180)); // Approx km per degree longitude
+
         this.select('*')
           .from('events')
           .join('event_rsvps', 'events.id', 'event_rsvps.event_id')
-          .whereRaw(`
-            ST_DWithin(
-              ST_Point(events.location_lng, events.location_lat)::geography,
-              ST_Point(user_profiles.location_lng, user_profiles.location_lat)::geography,
-              ?
-            )
-          `, [filters.radiusKm! * 1000])
+          .where('events.location_lat', '>=', filters.locationLat! - latDelta)
+          .where('events.location_lat', '<=', filters.locationLat! + latDelta)
+          .where('events.location_lng', '>=', filters.locationLng! - lngDelta)
+          .where('events.location_lng', '<=', filters.locationLng! + lngDelta)
           .where('event_rsvps.user_id', userId)
           .where('event_rsvps.status', 'going')
           .whereRaw('events.games && ?', [filters.games || ['mtg', 'pokemon', 'yugioh', 'lorcana']])
@@ -75,6 +86,10 @@ export class ListingModel extends BaseModel {
     }
 
     return query.orderBy('listings.created_at', 'desc');
+  }
+
+  static async findById(id: string): Promise<Listing | null> {
+    return this.db(this.tableName).where('id', id).first();
   }
 
   static async createListing(listingData: Partial<Listing>): Promise<Listing> {

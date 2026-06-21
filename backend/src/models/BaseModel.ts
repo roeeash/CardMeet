@@ -37,7 +37,7 @@ export abstract class BaseModel {
       if (Array.isArray(value)) {
         query = query.whereIn(key, value);
       } else {
-        query = query.where(key, value);
+        query = query.where(key, value as any);
       }
     });
 

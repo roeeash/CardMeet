@@ -8,6 +8,10 @@ export interface Meetup {
   status: MeetupStatus;
   buyerConfirmed: boolean;
   sellerConfirmed: boolean;
+  buyerCheckedIn: boolean;
+  sellerCheckedIn: boolean;
+  buyerCheckedInAt?: Date | null;
+  sellerCheckedInAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

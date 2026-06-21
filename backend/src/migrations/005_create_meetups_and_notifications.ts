@@ -6,15 +6,21 @@ export async function up(knex: Knex): Promise<void> {
     table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
     table.uuid('deal_id').references('id').inTable('deals').onDelete('CASCADE');
     table.uuid('event_id').references('id').inTable('events').onDelete('CASCADE');
-    table.timestamp('start_time').notNullable();
-    table.timestamp('end_time').notNullable();
+    table.timestamp('start_time').nullable();
+    table.timestamp('end_time').nullable();
+    table.string('proposed_window_start', 5).nullable(); // HH:MM format
+    table.string('proposed_window_end', 5).nullable(); // HH:MM format
     table.text('location_note');
-    table.enum('status', ['scheduled', 'completed', 'no_show_buyer', 'no_show_seller', 'cancelled']).defaultTo('scheduled');
+    table.enum('status', ['proposed', 'confirmed', 'scheduled', 'completed', 'no_show_buyer', 'no_show_seller', 'cancelled']).defaultTo('proposed');
     table.boolean('buyer_confirmed').defaultTo(false);
     table.boolean('seller_confirmed').defaultTo(false);
+    table.boolean('buyer_checked_in').defaultTo(false);
+    table.boolean('seller_checked_in').defaultTo(false);
+    table.timestamp('buyer_checked_in_at').nullable();
+    table.timestamp('seller_checked_in_at').nullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
-    
+
     // Indexes
     table.index(['deal_id']);
     table.index(['event_id']);
@@ -32,7 +38,8 @@ export async function up(knex: Knex): Promise<void> {
     table.jsonb('data');
     table.boolean('read').defaultTo(false);
     table.timestamp('created_at').defaultTo(knex.fn.now());
-    
+    table.timestamp('updated_at').defaultTo(knex.fn.now());
+
     // Indexes
     table.index(['user_id', 'read']);
     table.index(['created_at']);

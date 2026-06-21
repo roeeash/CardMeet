@@ -25,12 +25,6 @@ export async function up(knex: Knex): Promise<void> {
     table.index(['games']);
   });
 
-  // Add geospatial index for event locations
-  await knex.raw(`
-    CREATE INDEX idx_events_location 
-    ON events 
-    USING GIST (ST_Point(location_lng, location_lat))
-  `);
 
   // Event RSVPs table
   await knex.schema.createTable('event_rsvps', (table) => {

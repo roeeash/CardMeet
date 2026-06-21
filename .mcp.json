@@ -1,0 +1,1 @@
+{ "mcpServers": { "vibecheck": { "command": "npx", "args": ["@roeeash/vibecheck-mcp@latest"] } } }

@@ -105,3 +105,18 @@ Do not add:
 - Social features beyond reputation
 
 The goal is to solve the coordination problem, not build another marketplace.
+
+## Syntax Checking (MANDATORY)
+
+After writing or editing any `.html` file, always run:
+```bash
+node check-syntax.js <file.html>
+```
+from the project root. This validates all `<script type="text/babel">` blocks with `@babel/parser` (JSX + TypeScript plugins).
+
+The PostToolUse hook in `~/.claude/settings.json` runs this automatically on every `Write` to an `.html` file. If it exits non-zero, fix the reported error before proceeding — do NOT skip or ignore the check.
+
+Common JSX pitfalls to avoid:
+- Apostrophes inside single-quoted JS strings within JSX: use `"you're"` or `{`you're`}` instead of `'you're'`
+- Unescaped `<` or `>` inside JSX text: use `&lt;` / `&gt;`
+- Unterminated template literals or ternary chains

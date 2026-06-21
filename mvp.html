@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CardMeet — MVP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,0,600;9..144,0,700;9..144,1,400;9..144,1,500&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#14141a; --ink-2:#3a3a45; --muted:#767685; --line:#e6e6ec;
+  --paper:#f7f6f2; --paper-2:#fbfaf6;
+  --accent:#2c4cff; --accent-soft:#e8edff;
+  --good:#15803d; --good-soft:#d6f0de;
+  --warn:#92400e; --warn-soft:#fef0c7;
+  --bad:#991b1b; --bad-soft:#fde2e2;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;font-size:14px;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;}
+body{background-image:radial-gradient(rgba(20,20,26,.06) 1px,transparent 1px);background-size:16px 16px;}
+#root{display:flex;align-items:flex-start;justify-content:center;gap:24px;flex-wrap:wrap;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,textarea{font-family:inherit;}
+.serif{font-family:'Fraunces',serif;}
+.mono{font-family:'JetBrains Mono',monospace;}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:500;}
+
+/* Phone frame */
+.phone{width:390px;min-height:780px;max-height:850px;background:white;border:1.5px solid var(--ink);border-radius:36px;position:relative;overflow:hidden;box-shadow:0 4px 12px rgba(20,20,26,.06),0 24px 48px rgba(20,20,26,.12);display:flex;flex-direction:column;}
+.status-bar{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--ink);display:flex;justify-content:space-between;align-items:center;padding:14px 26px 6px;letter-spacing:.04em;flex-shrink:0;}
+.status-right{display:flex;gap:6px;align-items:center;}
+
+/* Tab bar */
+.tabbar{height:64px;border-top:1px solid var(--line);display:flex;background:white;flex-shrink:0;}
+.tabbar-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;color:var(--muted);padding:10px 4px 8px;position:relative;transition:color .15s;}
+.tabbar-btn.active{color:var(--ink);}
+.tabbar-btn.active::before{content:'';position:absolute;top:0;left:24%;right:24%;height:1.5px;background:var(--ink);}
+.tabbar-badge{position:absolute;top:8px;right:calc(50% - 18px);background:var(--warn);color:white;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;padding:1px 5px;border-radius:100px;min-width:14px;text-align:center;line-height:1.4;}
+
+/* App header */
+.app-header{padding:8px 20px 14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px;background:white;flex-shrink:0;}
+.app-title-row{display:flex;align-items:baseline;justify-content:space-between;}
+.app-title{font-family:'Fraunces',serif;font-weight:600;font-size:26px;letter-spacing:-.02em;line-height:1.1;}
+.app-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.profile-dot{width:32px;height:32px;border-radius:100px;background:var(--ink);color:white;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:500;font-size:14px;cursor:pointer;flex-shrink:0;}
+
+/* Screen */
+.screen{flex:1;overflow-y:auto;background:var(--paper);display:flex;flex-direction:column;}
+.screen::-webkit-scrollbar{width:0;}
+
+/* Tabs inside deal screen */
+.deal-tabs{display:flex;background:white;border-bottom:1px solid var(--line);padding:0 8px;flex-shrink:0;}
+.deal-tab{flex:1;padding:14px 8px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500;position:relative;transition:color .15s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.deal-tab.active{color:var(--ink);}
+.deal-tab.active::after{content:'';position:absolute;bottom:-1px;left:8px;right:8px;height:1.5px;background:var(--ink);}
+.deal-tab .tab-count{font-family:'Fraunces',serif;font-weight:500;font-size:18px;letter-spacing:-.02em;line-height:1;color:inherit;}
+
+/* Filter chips */
+.filter-row{display:flex;gap:6px;padding:12px 12px 4px;overflow-x:auto;flex-shrink:0;}
+.filter-row::-webkit-scrollbar{height:0;}
+.filter-chip{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;padding:6px 10px;border-radius:100px;background:white;border:1px solid var(--line);color:var(--muted);white-space:nowrap;transition:all .15s;}
+.filter-chip.active{background:var(--ink);color:white;border-color:var(--ink);}
+
+/* Turn banner */
+.turn-banner{margin:12px 12px 0;padding:10px 14px;border-radius:10px;display:flex;align-items:center;gap:10px;font-size:12px;flex-shrink:0;}
+.turn-banner.warn{background:var(--warn-soft);color:var(--warn);}
+.turn-banner.muted{background:white;color:var(--muted);border:1px solid var(--line);}
+.turn-banner.good{background:var(--good-soft);color:var(--good);}
+.turn-banner-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;}
+.turn-banner-text{flex:1;}
+.turn-banner .pulse{width:6px;height:6px;border-radius:100px;background:currentColor;animation:pulse 1.6s ease-in-out infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+
+/* Deal cards */
+.deal-card{margin:10px 12px 0;padding:14px;background:white;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:border-color .15s;}
+.deal-card:hover{border-color:var(--ink-2);}
+.deal-card-top{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
+.deal-card-card{font-family:'Fraunces',serif;font-weight:600;font-size:16px;letter-spacing:-.01em;line-height:1.2;}
+.deal-card-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.deal-price{font-family:'Fraunces',serif;font-size:19px;font-weight:500;letter-spacing:-.02em;text-align:right;line-height:1.1;}
+.deal-price-strike{text-decoration:line-through;color:var(--muted);font-size:13px;margin-right:2px;display:block;}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;font-weight:600;text-transform:uppercase;}
+.pill-warn{background:var(--warn-soft);color:var(--warn);}
+.pill-muted{background:var(--paper);color:var(--muted);border:1px solid var(--line);}
+.pill-good{background:var(--good-soft);color:var(--good);}
+
+/* Counterparty */
+.counterparty{display:flex;align-items:center;gap:10px;padding:10px 0 0;}
+.counterparty-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c4b8a8,#968878);font-family:'Fraunces',serif;color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;}
+.counterparty-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;}
+.counterparty-stats{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--muted);margin-top:2px;}
+.star{color:#d97706;}
+.zero-noshow{color:var(--good);font-weight:600;}
+
+/* Shared con row */
+.con-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0 0;font-size:11.5px;color:var(--muted);}
+.con-shared{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;}
+
+/* Nego thread */
+.nego-thread{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;}
+.nego-row{display:flex;align-items:center;gap:8px;font-size:12px;}
+.nego-actor{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;width:36px;flex-shrink:0;}
+.nego-amount{font-family:'Fraunces',serif;font-size:14px;font-weight:500;}
+.nego-time{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);}
+
+/* Matched card specifics */
+.meet-card{margin-top:10px;padding:10px 12px;background:var(--paper);border-radius:10px;display:flex;flex-direction:column;gap:6px;}
+.meet-row{display:flex;align-items:center;gap:8px;font-size:12px;}
+.meet-icon{width:22px;height:22px;border:1px solid var(--line);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.meet-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+.meet-val{font-family:'Fraunces',serif;font-size:13px;font-weight:500;}
+
+/* Buttons */
+.btn{font-family:'Inter',sans-serif;font-weight:600;font-size:13px;padding:12px 18px;border-radius:10px;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .1s,background .15s;white-space:nowrap;}
+.btn:hover{transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn-primary{background:var(--ink);color:white;}
+.btn-primary:hover{background:#000;}
+.btn-secondary{background:white;color:var(--ink);border-color:var(--line);}
+.btn-secondary:hover{border-color:var(--ink);}
+.btn-ghost{background:transparent;color:var(--accent);border-color:var(--accent-soft);}
+.btn-ghost:hover{background:var(--accent-soft);}
+.btn-bad{background:white;color:var(--bad);border-color:var(--bad-soft);}
+.btn-bad:hover{background:var(--bad-soft);}
+.btn-block{width:100%;}
+.btn-pill{border-radius:100px;}
+.btn[disabled]{opacity:.4;pointer-events:none;}
+
+/* Empty state */
+.empty{padding:48px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.empty-mark{width:32px;height:32px;border:1.5px solid var(--line);border-radius:100px;margin-bottom:4px;}
+.empty-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-.015em;}
+.empty-body{color:var(--muted);font-size:13px;max-width:240px;}
+
+/* Detail sheet */
+.sheet-backdrop{position:absolute;inset:0;background:rgba(20,20,26,.4);backdrop-filter:blur(2px);z-index:50;animation:fadeIn .2s ease-out;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:white;border-radius:24px 24px 0 0;z-index:60;max-height:90%;display:flex;flex-direction:column;animation:slideUp .28s cubic-bezier(.4,0,.2,1);border-top:1px solid var(--line);}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.sheet-grab{width:36px;height:4px;background:var(--line);border-radius:100px;margin:8px auto 0;}
+.sheet-body{padding:18px 20px 24px;overflow-y:auto;flex:1;}
+.sheet-body::-webkit-scrollbar{width:0;}
+.sheet-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.sheet-close{width:28px;height:28px;border-radius:100px;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--muted);flex-shrink:0;}
+.sheet-title{font-family:'Fraunces',serif;font-weight:600;font-size:22px;letter-spacing:-.02em;line-height:1.15;}
+.sheet-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+.sheet-section{padding:16px 0;border-top:1px solid var(--line);}
+.sheet-section:first-of-type{border-top:none;padding-top:0;}
+.sheet-section-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:10px;}
+.thread{display:flex;flex-direction:column;gap:10px;}
+.thread-row{display:flex;gap:12px;align-items:center;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;}
+.thread-row.you{background:var(--accent-soft);border-color:transparent;}
+.thread-row.you .thread-actor{color:var(--accent);}
+.thread-actor{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;width:44px;flex-shrink:0;}
+.thread-amount{font-family:'Fraunces',serif;font-weight:500;font-size:16px;}
+.thread-time{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+.counter-input-row{display:flex;gap:8px;align-items:stretch;margin-top:12px;}
+.counter-input{flex:1;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:'Fraunces',serif;font-weight:500;font-size:18px;background:white;outline:none;transition:border-color .15s;}
+.counter-input:focus{border-color:var(--ink);}
+.action-row{display:flex;gap:8px;padding-top:4px;}
+.action-row .btn{flex:1;}
+.meeting-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.meeting-row{display:flex;gap:12px;align-items:flex-start;}
+.meeting-row-icon{width:28px;height:28px;border:1.5px solid var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;}
+.meeting-row-info{flex:1;}
+.meeting-row-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;}
+.meeting-row-value{font-family:'Fraunces',serif;font-weight:500;font-size:16px;margin-top:2px;line-height:1.2;}
+.meeting-row-detail{font-size:12px;color:var(--muted);margin-top:1px;}
+
+/* Toast */
+.toast{position:absolute;left:16px;right:16px;top:16px;background:var(--ink);color:white;padding:12px 14px;border-radius:10px;font-size:13px;z-index:100;display:flex;align-items:center;gap:10px;animation:toastIn .3s cubic-bezier(.4,0,.2,1);box-shadow:0 8px 24px rgba(20,20,26,.2);}
+@keyframes toastIn{from{transform:translateY(-12px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.toast-mark{width:16px;height:16px;border-radius:100px;background:var(--good);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+
+/* Onboarding */
+.onb-wrap{flex:1;display:flex;flex-direction:column;background:var(--paper);}
+.onb-progress{display:flex;gap:6px;padding:16px 20px 0;}
+.onb-progress-step{flex:1;height:3px;border-radius:100px;background:var(--line);transition:background .3s;}
+.onb-progress-step.done{background:var(--ink);}
+.onb-step-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:24px 24px 6px;font-weight:500;}
+.onb-headline{font-family:'Fraunces',serif;font-weight:500;font-size:32px;letter-spacing:-.025em;line-height:1.05;padding:0 24px 8px;}
+.onb-headline em{font-style:italic;color:var(--ink-2);font-weight:400;}
+.onb-blurb{font-size:13.5px;color:var(--ink-2);line-height:1.55;padding:0 24px 24px;}
+.onb-body{flex:1;padding:0 24px;overflow-y:auto;}
+.onb-body::-webkit-scrollbar{width:0;}
+.onb-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:8px;}
+.onb-input-wrap{width:100%;background:white;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;display:flex;align-items:center;gap:8px;}
+.onb-input-wrap input{flex:1;border:none;outline:none;font-size:14px;font-family:inherit;background:transparent;}
+.onb-radius{text-align:center;padding:22px 16px 16px;background:white;border:1px solid var(--line);border-radius:14px;}
+.onb-radius .num{font-family:'Fraunces',serif;font-size:64px;font-weight:500;line-height:1;letter-spacing:-.04em;}
+.onb-radius .unit{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-top:8px;}
+.onb-slider{position:relative;height:24px;margin:16px 4px 4px;cursor:pointer;}
+.onb-slider-track{position:absolute;top:50%;left:0;right:0;height:3px;background:var(--line);border-radius:100px;transform:translateY(-50%);}
+.onb-slider-fill{position:absolute;top:50%;left:0;height:3px;background:var(--ink);border-radius:100px;transform:translateY(-50%);}
+.onb-slider-thumb{position:absolute;top:50%;width:20px;height:20px;background:var(--ink);border:3px solid white;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(0,0,0,.16);}
+.onb-slider-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);letter-spacing:.1em;margin-top:8px;}
+.game-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.game-chip{padding:10px 14px;border-radius:100px;border:1px solid var(--line);background:white;font-size:13px;font-weight:500;color:var(--ink-2);transition:all .15s;}
+.game-chip.on{background:var(--ink);color:white;border-color:var(--ink);}
+.onb-foot{padding:16px 20px 20px;border-top:1px solid var(--line);background:white;display:flex;gap:8px;flex-shrink:0;}
+.onb-foot .btn{flex:1;}
+.onb-foot .btn-primary{flex:2;}
+
+/* Calendar */
+.section-head{display:flex;align-items:baseline;justify-content:space-between;padding:18px 20px 8px;}
+.section-head .more{font-size:12px;color:var(--accent);font-weight:500;}
+.con-card{margin:0 20px 10px;background:white;border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+.con-card.featured{border-color:var(--ink);background:var(--paper-2);}
+.con-card.featured::before{content:'— featured';font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:-4px;}
+.con-date{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;font-weight:600;}
+.con-name{font-family:'Fraunces',serif;font-weight:600;font-size:19px;letter-spacing:-.015em;line-height:1.15;}
+.con-venue{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.con-attendees{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+.con-rsvp{display:flex;gap:6px;margin-top:4px;}
+.con-rsvp-btn{flex:1;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:white;font-size:12px;font-weight:600;color:var(--muted);text-align:center;transition:all .15s;}
+.con-rsvp-btn.on-going{background:var(--good-soft);color:var(--good);border-color:transparent;}
+.con-rsvp-btn.on-maybe{background:var(--warn-soft);color:var(--warn);border-color:transparent;}
+.con-rsvp-btn.on-no{background:var(--paper);color:var(--ink-2);border-color:transparent;}
+
+/* Browse */
+.search-bar{margin:12px 20px;background:white;border:1px solid var(--line);border-radius:100px;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);}
+.search-bar input{flex:1;border:none;outline:none;font-size:13px;background:transparent;}
+.browse-filters{display:flex;gap:6px;padding:4px 20px 12px;overflow-x:auto;}
+.browse-filters::-webkit-scrollbar{height:0;}
+.listing-card{margin:0 20px 10px;display:flex;gap:14px;padding:14px;background:white;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:border-color .15s,transform .1s;}
+.listing-card:hover{border-color:var(--ink-2);}
+.listing-card:active{transform:translateY(1px);}
+.listing-img{width:64px;height:90px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;color:rgba(255,255,255,.6);text-align:center;font-weight:500;}
+.listing-img.c0{background:linear-gradient(135deg,#2a2a3e,#4a3a6e);}
+.listing-img.c1{background:linear-gradient(135deg,#614025,#8e6938);}
+.listing-img.c2{background:linear-gradient(135deg,#6b1f1f,#a84141);}
+.listing-img.c3{background:linear-gradient(135deg,#1f3d6b,#4170a8);}
+.listing-img.c4{background:linear-gradient(135deg,#1f5c3d,#3d8e62);}
+.listing-img.c5{background:linear-gradient(135deg,#e8a13a,#f0c878);}
+.listing-img.c6{background:linear-gradient(135deg,#c93c44,#e87680);}
+.listing-meta{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+.listing-name{font-family:'Fraunces',serif;font-weight:600;font-size:16px;letter-spacing:-.01em;line-height:1.2;}
+.listing-set{font-size:11.5px;color:var(--muted);}
+.listing-price{font-family:'Fraunces',serif;font-size:19px;font-weight:500;letter-spacing:-.02em;margin-top:2px;line-height:1;}
+.listing-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;font-weight:600;color:var(--accent);text-transform:uppercase;margin-top:auto;padding-top:4px;}
+.listing-tag.muted{color:var(--muted);}
+
+/* Listing detail */
+.sub-header{padding:14px 20px 12px;border-bottom:1px solid var(--line);background:white;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.sub-header-back{width:28px;height:28px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink);flex-shrink:0;}
+.sub-header-title{font-family:'Fraunces',serif;font-weight:600;font-size:18px;letter-spacing:-.015em;flex:1;}
+.sub-header-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.detail-photo{width:100%;aspect-ratio:5/7;max-height:240px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.4);}
+.detail-headline{font-family:'Fraunces',serif;font-weight:600;font-size:26px;letter-spacing:-.02em;line-height:1.1;margin-top:16px;}
+.detail-set{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+.detail-price-big{font-family:'Fraunces',serif;font-size:40px;font-weight:500;letter-spacing:-.025em;line-height:1;margin-top:14px;}
+.detail-price-meta{font-size:11.5px;color:var(--muted);margin-top:4px;display:flex;align-items:center;gap:8px;}
+.detail-section{padding:18px 20px;border-top:1px solid var(--line);}
+.detail-section-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:12px;}
+.seller-card{display:flex;align-items:center;gap:12px;padding:12px;background:var(--paper);border-radius:12px;}
+.seller-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#c4b8a8,#968878);flex-shrink:0;font-family:'Fraunces',serif;font-weight:500;color:white;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.seller-info{flex:1;}
+.seller-name{font-weight:600;font-size:14px;}
+.seller-stats{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;color:var(--muted);margin-top:2px;}
+.shared-banner{background:var(--accent-soft);border-radius:12px;padding:14px;}
+.shared-banner-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin-bottom:6px;}
+.shared-banner-body{font-size:13px;color:var(--ink);line-height:1.45;}
+.cta-bar{background:white;border-top:1px solid var(--line);padding:14px 20px 16px;display:flex;gap:8px;flex-shrink:0;}
+.cta-bar .btn{flex:1;}
+.cta-bar .btn-primary{flex:1.4;}
+.offer-input-wrap{position:relative;background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:18px 16px;text-align:center;transition:border-color .15s;}
+.offer-input-wrap.focus{border-color:var(--ink);}
+.offer-input{font-family:'Fraunces',serif;font-size:48px;font-weight:500;letter-spacing:-.03em;color:var(--ink);border:none;outline:none;background:transparent;width:6ch;text-align:center;padding:0;}
+
+/* Profile */
+.profile-hero{padding:28px 20px 20px;text-align:center;background:white;border-bottom:1px solid var(--line);}
+.profile-avatar-big{width:72px;height:72px;border-radius:50%;background:var(--ink);color:white;font-family:'Fraunces',serif;font-size:30px;font-weight:500;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.profile-name{font-family:'Fraunces',serif;font-weight:600;font-size:24px;letter-spacing:-.015em;}
+.profile-handle{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--muted);margin-top:4px;}
+.profile-stars{margin-top:6px;font-size:13px;color:#d97706;}
+.profile-mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.profile-mini-cell{background:white;padding:14px 12px;text-align:center;}
+.profile-mini-num{font-family:'Fraunces',serif;font-size:24px;font-weight:500;letter-spacing:-.02em;line-height:1;}
+.profile-mini-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px;font-weight:500;}
+.profile-section-label{padding:24px 20px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase;font-weight:500;}
+.profile-row{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:white;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s;}
+.profile-row:hover{background:var(--paper-2);}
+.profile-row-label{font-size:14px;color:var(--ink);}
+.profile-row-value{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.profile-row-value::after{content:'›';font-family:serif;font-size:16px;}
+.profile-badges{display:flex;flex-wrap:wrap;gap:6px;padding:0 20px 16px;}
+.profile-badge{padding:6px 12px;border-radius:100px;background:var(--accent-soft);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;}
+
+/* Login screen */
+.login-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px 28px;background:var(--paper);}
+.login-logo{font-family:'Fraunces',serif;font-size:36px;font-weight:600;letter-spacing:-.025em;margin-bottom:6px;}
+.login-tagline{font-size:13px;color:var(--muted);font-style:italic;font-family:'Fraunces',serif;margin-bottom:36px;line-height:1.5;}
+.login-field{margin-bottom:12px;}
+.login-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px;}
+.login-field input{width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:14px;background:white;outline:none;transition:border-color .15s;}
+.login-field input:focus{border-color:var(--ink);}
+.login-actions{margin-top:8px;display:flex;flex-direction:column;gap:8px;}
+.login-divider{text-align:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:4px 0;}
+
+/* Meetup / checkin */
+.meetup-hero{background:var(--ink);color:white;border-radius:16px;padding:22px;position:relative;overflow:hidden;margin:16px 20px 0;}
+.meetup-hero::after{content:'';position:absolute;right:-50px;top:-50px;width:160px;height:160px;background:radial-gradient(circle,var(--accent) 0%,transparent 65%);opacity:.45;border-radius:50%;pointer-events:none;}
+.meetup-hero-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:rgba(255,255,255,.55);text-transform:uppercase;margin-bottom:10px;position:relative;}
+.meetup-hero-name{font-family:'Fraunces',serif;font-size:28px;font-weight:500;letter-spacing:-.025em;line-height:1.05;margin-bottom:8px;position:relative;}
+.meetup-hero-when{font-size:13px;color:rgba(255,255,255,.75);position:relative;}
+.meetup-detail-row{background:white;border:1px solid var(--line);padding:14px 16px;border-radius:12px;margin:10px 20px 0;display:flex;align-items:flex-start;gap:14px;}
+.meetup-detail-icon{width:32px;height:32px;border:1.5px solid var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.meetup-detail-info{flex:1;}
+.meetup-detail-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px;}
+.meetup-detail-value{font-family:'Fraunces',serif;font-size:17px;font-weight:500;letter-spacing:-.01em;line-height:1.2;}
+.meetup-detail-meta{font-size:12px;color:var(--muted);margin-top:3px;}
+.checkin-here-btn{width:100%;background:var(--accent);color:white;border-radius:12px;padding:18px;font-family:inherit;font-size:16px;font-weight:600;letter-spacing:-.01em;border:none;transition:transform .1s,background .15s;margin-bottom:8px;}
+.checkin-here-btn:hover{transform:translateY(-1px);background:#1f3df0;}
+.checkin-here-btn.done{background:var(--good);}
+.checkin-here-btn.done:hover{transform:none;}
+.partner-status-card{margin:12px 20px 0;padding:14px;background:white;border:1px solid var(--line);border-radius:12px;display:flex;align-items:center;gap:12px;}
+.partner-status-card .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c4b8a8,#968878);font-family:'Fraunces',serif;color:white;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.partner-status-card .nm{font-size:13.5px;font-weight:600;}
+.partner-status-card .st{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-top:3px;}
+.partner-status-card .st.checked{color:var(--good);}
+.footnote{font-size:11.5px;color:var(--muted);line-height:1.5;padding:16px 20px 8px;font-style:italic;font-family:'Fraunces',serif;}
+
+/* Time picker */
+.time-slot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px;}
+.time-slot-btn{padding:12px 10px;border:1.5px solid var(--line);border-radius:10px;background:white;font-size:13px;font-weight:600;color:var(--ink-2);text-align:center;cursor:pointer;transition:all .15s;}
+.time-slot-btn:hover{border-color:var(--ink);background:var(--paper-2);}
+.time-slot-btn.selected{background:var(--ink);color:white;border-color:var(--ink);}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.12.4/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useMemo, useRef } = React;
+
+// ─── API Configuration ────────────────────────────────────────────────────────
+const API_BASE = '';
+
+/**
+ * Fetch JSON from the API with automatic token and error handling.
+ *
+ * @param {string} path - API path (e.g., '/api/auth/login')
+ * @param {Object} opts - Fetch options
+ * @param {string} opts.method - HTTP method (default: GET or POST if body provided)
+ * @param {Object} opts.body - Request body (will be JSON-encoded)
+ * @returns {Promise<Object>} Parsed JSON response
+ * @throws {Error} On non-2xx status with descriptive error message
+ */
+async function fetchJSON(path, opts = {}) {
+  const url = API_BASE + path;
+  const token = localStorage.getItem('cardmeet_token');
+
+  const fetchOpts = {
+    method: opts.method || (opts.body ? 'POST' : 'GET'),
+    headers: {
+      'Content-Type': 'application/json',
+      ...opts.headers,
+    },
+  };
+
+  if (token) {
+    fetchOpts.headers.Authorization = `Bearer ${token}`;
+  }
+
+  if (opts.body && typeof opts.body === 'object') {
+    fetchOpts.body = JSON.stringify(opts.body);
+  } else if (opts.body) {
+    fetchOpts.body = opts.body;
+  }
+
+  const response = await fetch(url, fetchOpts);
+  const data = await response.json();
+
+  if (!response.ok) {
+    const errorMsg = data.error || data.message || `HTTP ${response.status}`;
+    throw new Error(errorMsg);
+  }
+
+  return data;
+}
+
+/**
+ * Save authentication token to localStorage.
+ *
+ * @param {string} token - JWT token to store
+ */
+function setToken(token) {
+  localStorage.setItem('cardmeet_token', token);
+}
+
+/**
+ * Retrieve authentication token from localStorage.
+ *
+ * @returns {string|null} Stored JWT token, or null if not set
+ */
+function getToken() {
+  return localStorage.getItem('cardmeet_token');
+}
+
+/**
+ * Delete authentication token from localStorage.
+ */
+function clearToken() {
+  localStorage.removeItem('cardmeet_token');
+}
+
+/**
+ * Extract user ID from JWT token payload (does not verify signature).
+ * The token is a JWT in format: header.payload.signature
+ * We decode the payload (base64url) to extract the userId.
+ *
+ * @returns {string|null} User ID from token, or null if token not found or invalid
+ */
+function getCurrentUserId() {
+  const token = getToken();
+  if (!token) return null;
+
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+
+    // Decode payload (base64url)
+    const payload = JSON.parse(atob(parts[1]));
+    return payload.userId || null;
+  } catch (e) {
+    console.warn('Failed to decode token:', e);
+    return null;
+  }
+}
+
+// ─── Helper Functions ─────────────────────────────────────────────────────────
+
+/**
+ * Convert game name to display format.
+ *
+ * @param {string} game - Game code (e.g., 'mtg', 'pokemon', 'yugioh', 'lorcana')
+ * @returns {string} Titlecased game name (e.g., 'MTG', 'Pokémon', 'Yu-Gi-Oh!', 'Lorcana')
+ */
+function gameDisplayName(game) {
+  const map = {
+    'mtg': 'MTG',
+    'pokemon': 'Pokémon',
+    'yugioh': 'Yu-Gi-Oh!',
+    'lorcana': 'Lorcana',
+  };
+  return map[game] || game;
+}
+
+/**
+ * Convert display game name back to code.
+ *
+ * @param {string} display - Display name (e.g., 'MTG', 'Pokémon', 'Yu-Gi-Oh!', 'Lorcana')
+ * @returns {string} Game code (e.g., 'mtg', 'pokemon', 'yugioh', 'lorcana')
+ */
+function displayToGameCode(display) {
+  const map = {
+    'MTG': 'mtg',
+    'Pokémon': 'pokemon',
+    'Yu-Gi-Oh!': 'yugioh',
+    'Lorcana': 'lorcana',
+  };
+  return map[display] || display.toLowerCase();
+}
+
+/**
+ * Convert condition code to display format.
+ *
+ * @param {string} cond - Condition code (e.g., 'nm', 'lp', 'mp', 'hp')
+ * @returns {string} Uppercase condition (e.g., 'NM', 'LP', 'MP', 'HP')
+ */
+function conditionDisplayName(cond) {
+  const map = {
+    'nm': 'NM',
+    'lp': 'LP',
+    'mp': 'MP',
+    'hp': 'HP',
+  };
+  return map[cond] || cond.toUpperCase();
+}
+
+/**
+ * Format ISO 8601 timestamp to relative time.
+ *
+ * @param {string} isoTimestamp - ISO 8601 timestamp string
+ * @returns {string} Relative time string (e.g., "2 days ago", "1h ago", "now")
+ */
+function formatTimeAgo(isoTimestamp) {
+  if (!isoTimestamp) return 'now';
+  const now = new Date();
+  const past = new Date(isoTimestamp);
+  const diffMs = now - past;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return past.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
+
+/**
+ * Format ISO 8601 timestamp to local time (HH:MM format).
+ *
+ * @param {string} isoTimestamp - ISO 8601 timestamp string
+ * @returns {string} Local time string (e.g., "14:30")
+ */
+function formatTime(isoTimestamp) {
+  if (!isoTimestamp) return '–';
+  const d = new Date(isoTimestamp);
+  return d.toLocaleTimeString('en-IL', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+/**
+ * Compute countdown from start time to now (e.g., "21h", "30m").
+ *
+ * @param {string} startTimeIso - ISO 8601 start time
+ * @returns {string} Countdown string (e.g., "21h", "30m", "soon")
+ */
+function computeCountdown(startTimeIso) {
+  if (!startTimeIso) return '–';
+  const now = new Date();
+  const start = new Date(startTimeIso);
+  const diffMs = start - now;
+
+  if (diffMs < 0) return 'past';
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'now';
+  if (diffMins < 60) return `${diffMins}m`;
+  if (diffHours < 24) return `${diffHours}h`;
+  if (diffDays < 7) return `${diffDays}d`;
+  return 'soon';
+}
+
+// ─── Mapping Functions ────────────────────────────────────────────────────────
+
+/**
+ * Map API listing to component shape.
+ *
+ * @param {Object} apiListing - Raw API listing object
+ * @returns {Object} Component-ready listing with normalized fields
+ */
+function mapListing(apiListing) {
+  return {
+    id: apiListing.id,
+    cardName: apiListing.cardName,
+    set: apiListing.cardSet,
+    cond: conditionDisplayName(apiListing.condition),
+    price: apiListing.price,
+    game: gameDisplayName(apiListing.game),
+    seller: {
+      name: apiListing.sellerName || 'Unknown',
+      rating: apiListing.sellerRating || 0,
+      deals: apiListing.sellerDeals || 0,
+      noShows: apiListing.sellerNoShows || 0,
+    },
+    photos: 3,
+    sharedCon: (apiListing.sharedEvents || []).map(e => e.name).join(', ') || null,
+    listed: formatTimeAgo(apiListing.createdAt),
+    desc: apiListing.description,
+  };
+}
+
+/**
+ * Map API event to component shape.
+ *
+ * @param {Object} apiEvent - Raw API event object
+ * @param {string} rsvpStatus - Optional user RSVP status ('going', 'maybe', 'no', or null)
+ * @returns {Object} Component-ready event with normalized fields
+ */
+function mapEvent(apiEvent, rsvpStatus = null) {
+  const start = new Date(apiEvent.startDate);
+  const end = new Date(apiEvent.endDate);
+
+  // Determine dateRange (FRI–SUN, etc)
+  let dateRange = null;
+  if (apiEvent.startDate && apiEvent.endDate && start.toDateString() !== end.toDateString()) {
+    const startDay = start.toLocaleDateString('en-US', { weekday:'short' }).toUpperCase();
+    const endDay = end.toLocaleDateString('en-US', { weekday:'short' }).toUpperCase();
+    dateRange = `${startDay}–${endDay}`;
+  }
+
+  // Determine date (MAY 22–24 or FRI MAY 9)
+  let date;
+  if (dateRange) {
+    const startFormatted = start.toLocaleDateString('en-US', { month:'short', day:'numeric' }).toUpperCase();
+    const endFormatted = end.toLocaleDateString('en-US', { month:'short', day:'numeric' }).toUpperCase();
+    date = `${startFormatted}–${endFormatted}`;
+  } else {
+    const dayOfWeek = start.toLocaleDateString('en-US', { weekday:'short' }).toUpperCase();
+    const monthDay = start.toLocaleDateString('en-US', { month:'short', day:'numeric' }).toUpperCase();
+    date = `${dayOfWeek} ${monthDay}`;
+  }
+
+  return {
+    id: apiEvent.id,
+    name: apiEvent.name,
+    dateRange: dateRange,
+    date: date,
+    venue: apiEvent.locationName,
+    city: 'Tel Aviv', // Phase 3: reverse-geocode or fetch from API
+    distance: 50, // Phase 3: compute from user location
+    games: (apiEvent.games || []).map(g => gameDisplayName(g)),
+    attendees: 32, // Phase 3: fetch actual count
+    rsvp: rsvpStatus, // Map from API response
+    featured: false,
+  };
+}
+
+/**
+ * Map API deal to component shape.
+ *
+ * Enriched data comes from the API (backend joins with listings, offers, profiles, event_rsvps).
+ * This function:
+ * 1. Computes 'turn' by comparing currentTurn user ID with current user ID
+ * 2. Formats card details from listing fields
+ * 3. Formats counterparty info from user profiles
+ * 4. Formats offer chain from offerChain array
+ * 5. Formats sharedCon from shared event IDs/names (maps to event name from SEED_EVENTS)
+ *
+ * @param {Object} apiDeal - Raw API deal object with enriched fields
+ * @returns {Object} Component-ready deal with all negotiation and meeting details
+ */
+function mapDeal(apiDeal) {
+  const currentUserId = getCurrentUserId();
+
+  // Determine whose turn it is: 'you', 'them', or 'none'
+  let turn = 'none';
+  if (apiDeal.currentTurn) {
+    turn = apiDeal.currentTurn === currentUserId ? 'you' : 'them';
+  }
+
+  // Format the offer chain (thread) from offerChain array
+  const thread = (apiDeal.offerChain || []).map((offer) => ({
+    id: offer.id, // Needed for accept endpoint
+    actor: offer.fromUserId === currentUserId ? 'you' : 'them',
+    amount: Math.round(offer.priceCents / 100), // Convert to whole shekels
+    t: formatTimeAgo(offer.createdAt),
+  }));
+
+  // Format card details
+  const card = {
+    name: apiDeal.cardName || 'Unknown Card',
+    set: apiDeal.cardSet || 'Unknown',
+    printing: (apiDeal.condition || 'NM').toUpperCase(),
+  };
+
+  // Format counterparty info
+  const counterparty = {
+    name: apiDeal.counterpartyName || 'Unknown',
+    role: apiDeal.counterpartyRole || 'seller', // 'buyer' or 'seller'
+    rating: apiDeal.counterpartyRating || 0,
+    deals: apiDeal.counterpartyDeals || 0,
+    noShows: apiDeal.counterpartyNoShows || 0,
+  };
+
+  // Format shared events: if sharedEventNames has entries, pick first one (Phase 3.10: use API data)
+  let sharedCon = null;
+  if (apiDeal.sharedEventNames && apiDeal.sharedEventNames.length > 0) {
+    const eventName = apiDeal.sharedEventNames[0];
+    sharedCon = {
+      shared: true,
+      name: eventName,
+      date: apiDeal.sharedEventDates && apiDeal.sharedEventDates[0] ? apiDeal.sharedEventDates[0] : 'TBD',
+    };
+  }
+
+  // Extract meeting info from API response (Phase 3.8)
+  let meeting = undefined;
+  if (apiDeal.meeting) {
+    const buyerCheckedIn = apiDeal.meeting.buyerCheckedIn || false;
+    const sellerCheckedIn = apiDeal.meeting.sellerCheckedIn || false;
+    meeting = {
+      id: apiDeal.meeting.id,
+      window: `${formatTime(apiDeal.meeting.startTime)} – ${formatTime(apiDeal.meeting.endTime)}`,
+      day: new Date(apiDeal.meeting.startTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      startTime: apiDeal.meeting.startTime,
+      endTime: apiDeal.meeting.endTime,
+      countdown: computeCountdown(apiDeal.meeting.startTime),
+      spot: apiDeal.meeting.locationNote || sharedCon?.name || 'Event venue',
+      buyerCheckedIn: buyerCheckedIn,
+      sellerCheckedIn: sellerCheckedIn,
+      bothCheckedIn: buyerCheckedIn && sellerCheckedIn,
+    };
+  }
+
+  // Extract proposed meeting (if present)
+  let proposed = undefined;
+  if (apiDeal.proposed) {
+    proposed = {
+      id: apiDeal.proposed.id,
+      window: `${formatTime(apiDeal.proposed.startTime)} – ${formatTime(apiDeal.proposed.endTime)}`,
+      day: new Date(apiDeal.proposed.startTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      spot: apiDeal.proposed.locationNote || sharedCon?.name || 'Event venue',
+    };
+  }
+
+  return {
+    id: apiDeal.id,
+    buyerId: apiDeal.buyerId,
+    sellerId: apiDeal.sellerId,
+    status: apiDeal.status, // negotiating | matched | scheduled
+    turn: turn, // 'you' | 'them' | 'none'
+    card: card,
+    askPrice: apiDeal.askPrice || 0,
+    currentOffer: apiDeal.currentPrice || 0,
+    thread: thread,
+    counterparty: counterparty,
+    sharedCon: sharedCon,
+    sharedEventIds: apiDeal.sharedEventIds || [],
+    agreedPrice: apiDeal.currentPrice || 0, // Phase 3.7+: matched deal price
+    proposed: proposed, // Phase 3.8+: proposed meeting details
+    meeting: meeting, // Phase 3.8+: confirmed meetup details
+    lastMove: 'system', // Phase 3.7+: extract from offer chain
+    lastMoveAt: formatTimeAgo(apiDeal.updatedAt),
+  };
+}
+
+/**
+ * Map API UserProfile to component shape.
+ *
+ * The UserProfile API only has certain fields; Phase 3 will fetch email from the User
+ * table and location from geocoding or hardcoded settings.
+ *
+ * @param {Object} apiProfile - Raw API UserProfile object
+ * @returns {Object} Component-ready profile with name, stats, and preferences
+ */
+function mapProfile(apiResponse) {
+  // apiResponse has both user and profile fields from GET /api/profile
+  const user = apiResponse.user || {};
+  const profile = apiResponse.profile || {};
+
+  // Derive initials: first char + first char of last word
+  const names = (profile.displayName || '').split(' ').filter(Boolean);
+  let initials = '';
+  if (names.length > 0) {
+    initials = names[0][0];
+    if (names.length > 1) {
+      initials += names[names.length - 1][0];
+    }
+  }
+
+  return {
+    name: profile.displayName,
+    initials: initials.toUpperCase(),
+    email: user.email,
+    rating: profile.rating || 0,
+    deals: profile.completedDeals || 0,
+    noShows: profile.noShows || 0,
+    games: (profile.games || []).map(g => gameDisplayName(g)),
+    location: 'Tel Aviv, Israel', // Hardcoded for MVP
+    radius: profile.travelRadiusKm || 30,
+  };
+}
+
+// ─── Phase 3 API Wiring Pattern (Fallback Only) ────────────────────────────────
+/**
+ * PHASE 3 INTEGRATION PATTERN: Try → Fallback → Seed
+ *
+ * During Phase 3, all screens will wire to the API via a standardized try/catch/fallback pattern.
+ * The general structure is:
+ *
+ *   1. Call fetchJSON with the appropriate endpoint
+ *   2. Map the response using a mapping function (mapListing, mapDeal, mapEvent, mapProfile, etc.)
+ *   3. On network error or backend failure, fall back to SEED_* data
+ *   4. Render the data (API or seed) consistently
+ *
+ * IMPORTANT: This fallback is TEMPORARY and DEVELOPMENT-ONLY. At the end of Phase 3 (cycle 3.10),
+ * all SEED_* data will be removed entirely. Screens that hit API errors will then show proper
+ * error states or spinner screens, NOT blank or seed data.
+ *
+ * EXAMPLE: Fetching events for CalendarScreen:
+ *
+ *   async function loadCalendarEvents() {
+ *     try {
+ *       const response = await fetchJSON('/api/events');
+ *       const events = (response.events || []).map(mapEvent);
+ *       setEvents(events);
+ *     } catch (err) {
+ *       console.warn('Failed to fetch events, using fallback seed:', err);
+ *       // Fallback to SEED_EVENTS during development
+ *       setEvents(SEED_EVENTS);
+ *     }
+ *   }
+ *
+ * EXAMPLE: Fetching a deal with enrichment:
+ *
+ *   async function loadDeal(dealId) {
+ *     try {
+ *       const dealResponse = await fetchJSON(`/api/deals/${dealId}`);
+ *       const deal = mapDeal(dealResponse.deal, dealResponse.enriched);
+ *       setCurrentDeal(deal);
+ *     } catch (err) {
+ *       console.warn('Failed to fetch deal, using fallback seed:', err);
+ *       // Fallback during development
+ *       const seedDeal = SEED_DEALS.find(d => d.id === dealId);
+ *       setCurrentDeal(seedDeal || SEED_DEALS[0]);
+ *     }
+ *   }
+ *
+ * KEY POINTS:
+ * - All errors are logged to console for debugging
+ * - Seed data is only used when API fails (network down, backend error, endpoint not ready)
+ * - Mapping functions normalize API responses to consistent component shapes
+ * - This pattern keeps UI development unblocked while API work continues
+ */
+
+// ─── API Fetch Functions ───────────────────────────────────────────────────────
+
+/**
+ * Fetch the current user's profile from the API.
+ *
+ * GET /api/profile returns { user: { id, email, ... }, profile: { displayName, games, rating, ... } }
+ *
+ * @returns {Promise<Object|null>} Mapped profile object or null on error
+ */
+async function fetchProfile() {
+  try {
+    const response = await fetchJSON('/api/profile');
+    if (!response.user || !response.profile) {
+      console.warn('Invalid profile response structure:', response);
+      return null;
+    }
+    return mapProfile(response);
+  } catch (err) {
+    console.warn('Failed to fetch profile:', err);
+    return null;
+  }
+}
+
+// ─── Seed Data (ProfileScreen Display Fallback Only) ───────────────────────────
+/**
+ * CURRENT_USER is kept as a fallback display value for ProfileScreen only.
+ * Used when profile API fetch fails to prevent blank profile hero section.
+ * All other SEED_* constants have been removed in Phase 3.10.
+ *
+ * After Phase 3.10, screens will show proper error states instead of falling back to stale data.
+ */
+
+const CURRENT_USER = { name:'Roee A.', initials:'R', email:'roee@example.com', rating:4.9, deals:17, noShows:0, games:['MTG','Pokémon'], location:'Tel Aviv, Israel', radius:75 };
+
+// ─── Shared helpers ───────────────────────────────────────────────────────────
+function StatusBar() {
+  return (
+    <div className="status-bar">
+      <span>9:41</span>
+      <span className="status-right"><span>●●●● LTE</span><span>100%</span></span>
+    </div>
+  );
+}
+
+function Counterparty({ p }) {
+  const initials = p.name.split(' ').map(s=>s[0]).join('').slice(0,2);
+  return (
+    <div className="counterparty">
+      <div className="counterparty-avatar">{initials}</div>
+      <div style={{ flex:1 }}>
+        <div className="counterparty-name">{p.name} <span className="eyebrow" style={{ fontSize:9 }}>{p.role==='buyer'?'BUYER':'SELLER'}</span></div>
+        <div className="counterparty-stats"><span className="star">★</span> {(parseFloat(p.rating) || 0).toFixed(1)} · {parseInt(p.deals)||0} deals · <span className={(parseInt(p.noShows)||0)===0?'zero-noshow':''}>{parseInt(p.noShows)||0} no-show{(parseInt(p.noShows)||0)===1?'':'s'}</span></div>
+      </div>
+    </div>
+  );
+}
+
+function SharedCon({ con }) {
+  if (!con) return null;
+  if (con.shared) return (
+    <div className="con-row">
+      <span className="con-shared">📅 BOTH @ {con.name.toUpperCase()}</span>
+      <span>{con.date}</span>
+    </div>
+  );
+  return <div className="con-row"><span style={{ color:'var(--muted)' }}>📅 {con.name} · {con.date}</span></div>;
+}
+
+function Toast({ msg }) {
+  return <div className="toast"><span className="toast-mark">✓</span><span>{msg}</span></div>;
+}
+
+// ─── Login Screen ─────────────────────────────────────────────────────────────
+function LoginScreen({ onLogin }) {
+  const [email, setEmail] = useState('roee@example.com');
+  const [pass, setPass] = useState('password123');
+  const [displayName, setDisplayName] = useState('');
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState('login'); // login | register
+
+  const handleAuth = async () => {
+    setError(null);
+    setLoading(true);
+
+    try {
+      const endpoint = mode === 'login' ? 'login' : 'register';
+      const body = { email, password: pass };
+
+      if (mode === 'register') {
+        body.displayName = displayName;
+      }
+
+      const response = await fetchJSON(`/api/auth/${endpoint}`, {
+        method: 'POST',
+        body: body,
+      });
+
+      // Extract token and store it
+      if (response.accessToken) {
+        setToken(response.accessToken);
+        setLoading(false);
+        onLogin();
+      } else {
+        setError('No token received from server');
+        setLoading(false);
+      }
+    } catch (err) {
+      setError(err.message || 'Authentication failed');
+      setLoading(false);
+    }
+  };
+
+  const submit = () => {
+    if (email && pass && (mode === 'login' || (mode === 'register' && displayName))) {
+      handleAuth();
+    }
+  };
+
+  const toggleMode = () => {
+    setMode(m => m === 'login' ? 'register' : 'login');
+    setError(null);
+    setDisplayName('');
+  };
+
+  return (
+    <div className="login-wrap">
+      <div className="login-logo">CardMeet</div>
+      <div className="login-tagline">Face-to-face card trades.<br/>At conventions you're already going to.</div>
+      {mode === 'register' && (
+        <div className="login-field">
+          <label>Display Name</label>
+          <input type="text" value={displayName} onChange={e=>setDisplayName(e.target.value)} placeholder="Your name" />
+        </div>
+      )}
+      <div className="login-field">
+        <label>Email</label>
+        <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" />
+      </div>
+      <div className="login-field">
+        <label>Password</label>
+        <input type="password" value={pass} onChange={e=>setPass(e.target.value)} placeholder="••••••••" />
+      </div>
+      {error && (
+        <div style={{ marginBottom:'12px', padding:'10px 12px', background:'var(--bad-soft)', borderRadius:'8px', color:'var(--bad)', fontSize:'13px', lineHeight:'1.4' }}>
+          {error}
+        </div>
+      )}
+      <div className="login-actions">
+        <button className="btn btn-primary btn-block" onClick={submit} disabled={loading} style={{ opacity: loading ? 0.6 : 1 }}>
+          {loading ? 'Loading...' : (mode==='login'?'Sign in':'Create account')}
+        </button>
+        <div className="login-divider">or</div>
+        <button className="btn btn-secondary btn-block" onClick={toggleMode} disabled={loading} style={{ opacity: loading ? 0.6 : 1 }}>
+          {mode==='login'?'Create account':'Back to sign in'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Onboarding Screen ────────────────────────────────────────────────────────
+function OnboardingScreen({ onDone }) {
+  const [step, setStep] = useState(0);
+  const [city, setCity] = useState('Tel Aviv, Israel');
+  const [reach, setReach] = useState(30);
+  const [games, setGames] = useState(['mtg','pokemon']);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const toggleGame = g => setGames(prev=>prev.includes(g)?prev.filter(x=>x!==g):[...prev,g]);
+
+  const submitProfile = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await fetchJSON('/api/profile', {
+        method: 'PUT',
+        body: {
+          locationLat: 32.0853,
+          locationLng: 34.7818,
+          travelRadiusKm: reach,
+          games: games,
+        },
+      });
+      setLoading(false);
+      onDone();
+    } catch (err) {
+      setError(err.message || 'Failed to save profile');
+      setLoading(false);
+    }
+  };
+
+  const next = () => {
+    if (step < 2) {
+      setStep(step + 1);
+    } else {
+      submitProfile();
+    }
+  };
+
+  const reachPct = ((reach - 5) / (100 - 5)) * 100;
+  const onSlider = e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const x = Math.max(0, Math.min(r.width, e.clientX - r.left));
+    setReach(Math.round(5 + (x / r.width) * (100 - 5)));
+  };
+  return (
+    <div className="onb-wrap">
+      <div className="onb-progress">
+        {[0,1,2].map(i=><div key={i} className={`onb-progress-step ${step>=i?'done':''}`}/>)}
+      </div>
+      <div className="onb-step-num">Step {step+1} of 3</div>
+      {step===0 && <>
+        <h1 className="onb-headline">Where do you<br/><em>play?</em></h1>
+        <p className="onb-blurb">Your home base anchors the calendar — every convention within reach gets pulled in automatically.</p>
+        <div className="onb-body">
+          <div className="onb-label">Your location</div>
+          <div className="onb-input-wrap"><span>📍</span><input value={city} onChange={e=>setCity(e.target.value)}/></div>
+          <div style={{ marginTop:22 }}>
+            <div className="onb-label">Detected from device</div>
+            <div className="mono" style={{ fontSize:11,color:'var(--muted)',letterSpacing:'.08em',lineHeight:1.6 }}>32.0853° N · 34.7818° E<br/><span style={{ color:'var(--good)' }}>● </span>GPS confirmed · just now</div>
+          </div>
+        </div>
+      </>}
+      {step===1 && <>
+        <h1 className="onb-headline">How far will<br/>you <em>travel?</em></h1>
+        <p className="onb-blurb">One number for now. Most players go further for a Grand Prix than for FNM — that's a v2 problem.</p>
+        <div className="onb-body">
+          <div className="onb-radius"><div className="num">{reach}</div><div className="unit">kilometers</div></div>
+          <div className="onb-slider" onClick={onSlider}>
+            <div className="onb-slider-track"/><div className="onb-slider-fill" style={{ width:`${reachPct}%` }}/><div className="onb-slider-thumb" style={{ left:`${reachPct}%` }}/>
+          </div>
+          <div className="onb-slider-labels"><span>5 KM</span><span>100 KM</span></div>
+          <div style={{ marginTop:24,padding:14,background:'var(--accent-soft)',borderRadius:12,fontSize:12.5,color:'var(--ink)',lineHeight:1.5 }}>
+            <div className="mono" style={{ fontSize:9.5,letterSpacing:'.14em',textTransform:'uppercase',color:'var(--accent)',fontWeight:600,marginBottom:6 }}>Within {reach} km</div>
+            <div><strong>{reach<20?3:reach<75?5:reach<200?8:12}</strong> conventions in your reach over the next 60 days.</div>
+          </div>
+        </div>
+      </>}
+      {step===2 && <>
+        <h1 className="onb-headline">What do you<br/><em>play?</em></h1>
+        <p className="onb-blurb">Your selection filters every listing and convention from here on. Always editable in Profile.</p>
+        <div className="onb-body">
+          <div className="onb-label">Pick all that apply</div>
+          <div className="game-grid">
+            {['mtg','pokemon','yugioh','lorcana'].map(g=>(
+              <button key={g} className={`game-chip ${games.includes(g)?'on':''}`} onClick={()=>toggleGame(g)}>{gameDisplayName(g)}</button>
+            ))}
+          </div>
+          <div style={{ marginTop:22,fontSize:12,color:'var(--muted)',fontStyle:'italic',fontFamily:'Fraunces,serif',lineHeight:1.5 }}>
+            {games.length===0?'Pick at least one to continue.':games.length===1?`Listings for ${gameDisplayName(games[0])} only.`:`Listings across ${games.length} formats.`}
+          </div>
+        </div>
+        {error && (
+          <div style={{ marginTop:16,padding:12,background:'var(--bad-soft)',borderRadius:10,color:'var(--bad)',fontSize:13,lineHeight:1.4 }}>
+            {error}
+          </div>
+        )}
+      </>}
+      <div className="onb-foot">
+        <button className="btn btn-secondary" onClick={()=>step===0?onDone():setStep(step-1)} disabled={loading}>{step===0?'Skip':'Back'}</button>
+        <button className="btn btn-primary" disabled={loading || (step===2&&games.length===0)} onClick={next}>{loading?'Saving...':step<2?'Continue':'Open CardMeet'}</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Calendar Screen ──────────────────────────────────────────────────────────
+function CalendarScreen({ onNavigate }) {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [rsvpLoading, setRsvpLoading] = useState({});
+
+  // Fetch events on mount (Phase 3.10: no fallback seed data)
+  useEffect(() => {
+    const loadEvents = async () => {
+      try {
+        const response = await fetchJSON('/api/events');
+        const mappedEvents = (response.events || []).map(e => mapEvent(e, e.rsvpStatus));
+        setEvents(mappedEvents);
+        setError(null);
+      } catch (err) {
+        console.warn('Failed to fetch events:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadEvents();
+  }, []);
+
+  const goingCount = events.filter(e=>e.rsvp==='going').length;
+
+  const handleRsvp = async (id, status) => {
+    setRsvpLoading(prev => ({ ...prev, [id]: true }));
+    try {
+      const response = await fetchJSON(`/api/events/${id}/rsvp`, {
+        method: 'PUT',
+        body: { status: status },
+      });
+      // Update local state with the new RSVP status
+      setEvents(prev => prev.map(e =>
+        e.id === id ? { ...e, rsvp: response.rsvpStatus || status } : e
+      ));
+    } catch (err) {
+      console.error('Failed to update RSVP:', err);
+      // Show inline error message (could be enhanced with toast)
+    } finally {
+      setRsvpLoading(prev => ({ ...prev, [id]: false }));
+    }
+  };
+
+  return (
+    <div className="screen">
+      <div className="app-header">
+        <div className="app-title-row">
+          <div>
+            <div className="app-title">My conventions</div>
+            <div className="app-sub"><strong style={{ color:'var(--ink)' }}>{goingCount} going</strong> <span className="serif" style={{ fontStyle:'italic' }}>· {events.length} in {CURRENT_USER.radius} km</span></div>
+          </div>
+          <div className="profile-dot" onClick={()=>onNavigate('profile')}>{CURRENT_USER.initials}</div>
+        </div>
+      </div>
+      <div style={{ overflowY:'auto', flex:1 }}>
+        {loading && !events.length && (
+          <div className="empty"><div className="empty-mark"/><div className="empty-title">Loading events…</div></div>
+        )}
+        {error && events.length === 0 && (
+          <div className="empty">
+            <div className="empty-mark"/>
+            <div className="empty-title">Failed to load events</div>
+            <div className="empty-body">{error}</div>
+          </div>
+        )}
+        {!loading && events.length === 0 && !error && (
+          <div className="empty">
+            <div className="empty-mark"/>
+            <div className="empty-title">No events</div>
+            <div className="empty-body">No conventions in your area.</div>
+          </div>
+        )}
+        {!loading && events.length > 0 && (
+          <>
+            <div className="section-head"><span className="eyebrow">— This month</span><span className="more">Filter</span></div>
+            {events.map(c=>(
+              <div key={c.id} className={`con-card ${c.featured?'featured':''}`}>
+                <div>
+                  <div className="con-date">{c.dateRange?`${c.dateRange} · ${c.date}`:c.date}</div>
+                  <div className="con-name">{c.name}</div>
+                  <div className="con-venue"><span>📍 {c.venue} · {c.city}</span><span style={{ color:'var(--line)' }}>·</span><span>{c.distance} km</span></div>
+                </div>
+                <div className="con-attendees">{(parseInt(c.attendees) || 0).toLocaleString()} attending · {c.games?.join(', ') || 'Various'}</div>
+                <div className="con-rsvp">
+                  <button
+                    className={`con-rsvp-btn ${c.rsvp==='going'?'on-going':''}`}
+                    onClick={()=>handleRsvp(c.id,'going')}
+                    disabled={rsvpLoading[c.id]}
+                  >
+                    Going
+                  </button>
+                  <button
+                    className={`con-rsvp-btn ${c.rsvp==='maybe'?'on-maybe':''}`}
+                    onClick={()=>handleRsvp(c.id,'maybe')}
+                    disabled={rsvpLoading[c.id]}
+                  >
+                    Maybe
+                  </button>
+                  <button
+                    className={`con-rsvp-btn ${c.rsvp==='no'?'on-no':''}`}
+                    onClick={()=>handleRsvp(c.id,'no')}
+                    disabled={rsvpLoading[c.id]}
+                  >
+                    Can't go
+                  </button>
+                </div>
+              </div>
+            ))}
+            <div style={{ padding:'20px 20px 32px',textAlign:'center' }}><span className="eyebrow">— End of calendar</span></div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Browse Screen ────────────────────────────────────────────────────────────
+function BrowseScreen({ onNavigate }) {
+  const [filter, setFilter] = useState('shared');
+  const [query, setQuery] = useState('');
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch listings from API when filter or query changes
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Build query parameters based on current filter and search
+        const queryParams = new URLSearchParams();
+        if (filter === 'mtg') queryParams.append('games', 'mtg');
+        else if (filter === 'pokemon') queryParams.append('games', 'pokemon');
+        if (filter === 'shared') queryParams.append('sharedEventsOnly', 'true');
+        if (query.trim()) queryParams.append('search', query);
+
+        const response = await fetchJSON(`/api/listings?${queryParams.toString()}`, {
+          method: 'GET',
+        });
+
+        // Map API response to component shape
+        const mappedListings = (Array.isArray(response) ? response : []).map(mapListing);
+        setListings(mappedListings);
+      } catch (err) {
+        // Phase 3.10: no fallback seed data; show error state instead
+        setError(err.message || 'Failed to load listings');
+        setListings([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListings();
+  }, [filter, query]);
+
+  // Apply client-side filtering on top of API results
+  const filtered = useMemo(() => {
+    let list = listings;
+    if (filter === 'under200') list = list.filter(l => l.price < 200);
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      list = list.filter(l => l.cardName.toLowerCase().includes(q) || l.set.toLowerCase().includes(q));
+    }
+    return list;
+  }, [listings, filter, query]);
+
+  return (
+    <div className="screen">
+      <div className="app-header">
+        <div className="app-title-row">
+          <div>
+            <div className="app-title">Browse</div>
+            <div className="app-sub"><strong style={{ color:'var(--ink)' }}>{filtered.length}</strong> <span className="serif" style={{ fontStyle:'italic' }}>listings — sorted by shared con first</span></div>
+          </div>
+          <div className="profile-dot" onClick={() => onNavigate('profile')}>{CURRENT_USER.initials}</div>
+        </div>
+      </div>
+      <div style={{ overflowY:'auto',flex:1 }}>
+        <div className="search-bar"><span>🔎</span><input placeholder="Search a card, set, or seller…" value={query} onChange={e => setQuery(e.target.value)} /></div>
+        <div className="browse-filters">
+          {[['shared', '📅 Shared con'], ['all', 'All'], ['mtg', 'MTG'], ['pokemon', 'Pokémon'], ['under200', 'Under ₪200']].map(([k, l]) => (
+            <button key={k} className={`filter-chip ${filter === k ? 'active' : ''}`} onClick={() => setFilter(k)}>{l}</button>
+          ))}
+        </div>
+        {loading && <div style={{ padding:'20px',textAlign:'center',color:'var(--muted)' }}>Loading listings…</div>}
+        {error && listings.length === 0 && !loading && (
+          <div className="empty">
+            <div className="empty-mark"/>
+            <div className="empty-title">Failed to load listings</div>
+            <div className="empty-body">{error}</div>
+          </div>
+        )}
+        {!loading && filtered.map((l, i) => (
+          <div key={l.id} className="listing-card" onClick={() => onNavigate('listing', l.id)}>
+            <div className={`listing-img c${i % 7}`}>CARD</div>
+            <div className="listing-meta">
+              <div className="listing-name">{l.cardName}</div>
+              <div className="listing-set">{l.set} · {l.cond}</div>
+              <div className="listing-price">₪{(parseInt(l.price) || 0).toLocaleString()}</div>
+              <div className={`listing-tag ${l.sharedCon ? '' : 'muted'}`}>{l.sharedCon ? `📅 ${l.sharedCon}` : 'No shared con'}</div>
+            </div>
+          </div>
+        ))}
+        {!loading && filtered.length === 0 && <div className="empty"><div className="empty-mark" /><div className="empty-title">Nothing here.</div><div className="empty-body">Try a different filter or search term.</div></div>}
+        {!loading && <div style={{ padding:'20px 20px 32px',textAlign:'center' }}><span className="eyebrow">— End of results</span></div>}
+      </div>
+    </div>
+  );
+}
+
+// ─── Listing Detail Screen ────────────────────────────────────────────────────
+function ListingScreen({ listingId, onBack, onMakeOffer, onToast }) {
+  const [listing, setListing] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [offerOpen, setOfferOpen] = useState(false);
+  const [amount, setAmount] = useState('');
+  const [offerLoading, setOfferLoading] = useState(false);
+  const [offerError, setOfferError] = useState(null);
+
+  // Fetch listing by ID on mount (Phase 3.10: no fallback seed data)
+  useEffect(() => {
+    const loadListing = async () => {
+      try {
+        const response = await fetchJSON(`/api/listings/${listingId}`);
+        const mapped = mapListing(response);
+        setListing(mapped);
+        setAmount(String(Math.round(mapped.price * 0.85)));
+        setError(null);
+      } catch (err) {
+        console.warn('Failed to fetch listing:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadListing();
+  }, [listingId]);
+
+  const submit = async () => {
+    if (!amount || isNaN(+amount) || +amount <= 0) return;
+    setOfferLoading(true);
+    setOfferError(null);
+    try {
+      const response = await fetchJSON('/api/deals', {
+        method: 'POST',
+        body: {
+          listingId: listingId,
+          initialOfferPrice: Math.round(+amount), // Price in whole shekels
+        },
+      });
+      setOfferLoading(false);
+      onMakeOffer(listingId, +amount);
+      setOfferOpen(false);
+    } catch (err) {
+      setOfferError(err.message || 'Failed to create offer');
+      setOfferLoading(false);
+    }
+  };
+  if (loading) {
+    return (
+      <div style={{ display:'flex', flexDirection:'column', flex:1, overflow:'hidden' }}>
+        <div className="sub-header">
+          <button className="sub-header-back" onClick={onBack}>‹</button>
+          <div style={{ flex:1 }}><div className="sub-header-title">Loading…</div></div>
+        </div>
+        <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', color:'var(--muted)' }}>Loading listing…</div>
+      </div>
+    );
+  }
+
+  if (!listing) {
+    return (
+      <div style={{ display:'flex', flexDirection:'column', flex:1, overflow:'hidden' }}>
+        <div className="sub-header">
+          <button className="sub-header-back" onClick={onBack}>‹</button>
+          <div style={{ flex:1 }}><div className="sub-header-title">Error</div></div>
+        </div>
+        <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', color:'var(--bad)' }}>Failed to load listing</div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display:'flex',flexDirection:'column',flex:1,overflow:'hidden' }}>
+      <div className="sub-header">
+        <button className="sub-header-back" onClick={onBack}>‹</button>
+        <div style={{ flex:1 }}><div className="sub-header-title">{listing.cardName}</div><div className="sub-header-sub">{listing.set} · {listing.cond}</div></div>
+      </div>
+      <div style={{ flex:1,overflowY:'auto',background:'var(--paper)' }}>
+        <div style={{ padding:'20px 20px 0' }}>
+          <div className={`detail-photo c${listing.id.slice(1)%7}`} style={{ background:listing.game==='Pokémon'?'linear-gradient(135deg,#c93c44,#e87680)':'linear-gradient(135deg,#2a2a3e,#4a3a6e)' }}>CARD PHOTO 1 / {listing.photos}</div>
+          <div style={{ display:'flex',gap:6,marginTop:10 }}>{Array.from({length:listing.photos}).map((_,i)=><div key={i} style={{ width:44,height:60,borderRadius:6,border:`1px solid ${i===0?'var(--ink)':'var(--line)'}`,background:i===0?'var(--ink)':'var(--paper-2)' }}/>)}</div>
+        </div>
+        <div style={{ padding:'0 20px' }}>
+          <div className="detail-headline">{listing.cardName}</div>
+          <div className="detail-set">{listing.set} · {listing.cond}</div>
+          <div className="detail-price-big">₪{(parseInt(listing?.price) || 0).toLocaleString()}</div>
+          <div className="detail-price-meta">Listed {listing.listed}<span style={{ color:'var(--line)' }}>·</span><span className="pill pill-muted">{listing.game}</span></div>
+        </div>
+        {listing.sharedCon&&<div style={{ padding:'16px 20px 0' }}><div className="shared-banner"><div className="shared-banner-label">📅 Shared convention</div><div className="shared-banner-body">You're both attending <strong>{listing.sharedCon}</strong>. Deal completes face-to-face — no shipping, no escrow.</div></div></div>}
+        <div className="detail-section">
+          <div className="detail-section-label">Seller</div>
+          <div className="seller-card">
+            <div className="seller-avatar">{listing.seller.name[0]}</div>
+            <div className="seller-info">
+              <div className="seller-name">{listing.seller.name}</div>
+              <div className="seller-stats"><span className="star">★</span> {(parseFloat(listing.seller?.rating) || 0).toFixed(1)} · {parseInt(listing.seller?.deals) || 0} deals · <span className={(parseInt(listing.seller?.noShows) || 0)===0?'ok':''}>{parseInt(listing.seller?.noShows) || 0} no-shows</span></div>
+            </div>
+          </div>
+        </div>
+        {listing.desc&&<div className="detail-section"><div className="detail-section-label">Notes from seller</div><div style={{ fontFamily:'Fraunces,serif',fontSize:13,color:'var(--ink-2)',lineHeight:1.55,fontStyle:'italic' }}>{listing.desc}</div></div>}
+        <div style={{ height:80 }}/>
+      </div>
+      {offerOpen?(
+        <>
+          <div className="sheet-backdrop" onClick={()=>setOfferOpen(false)}/>
+          <div className="sheet">
+            <div className="sheet-grab"/>
+            <div className="sheet-body">
+              <div className="sheet-header"><div style={{ flex:1 }}><div className="sheet-title">Make an offer</div><div className="sheet-sub">Asking ₪{(parseInt(listing?.price) || 0).toLocaleString()}</div></div><button className="sheet-close" onClick={()=>setOfferOpen(false)}>✕</button></div>
+              {offerError && (
+                <div style={{ marginBottom:12, padding:'10px 12px', background:'var(--bad-soft)', borderRadius:'8px', color:'var(--bad)', fontSize:'13px', lineHeight:'1.4' }}>
+                  {offerError}
+                </div>
+              )}
+              <div className="offer-input-wrap" style={{ marginBottom:12 }}>
+                <span style={{ fontFamily:'Fraunces,serif',fontSize:32,fontWeight:500,color:'var(--muted)',marginRight:4 }}>₪</span>
+                <input className="offer-input" value={amount} onChange={e=>setAmount(e.target.value.replace(/[^\d]/g,''))} disabled={offerLoading} />
+              </div>
+              <div style={{ display:'flex',gap:6,justifyContent:'center',marginBottom:16 }}>
+                {[0.7,0.8,0.9].map(p=>{const v=Math.round(listing.price*p);return<button key={p} style={{ fontFamily:'JetBrains Mono,monospace',fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',fontWeight:600,padding:'7px 12px',borderRadius:100,background:'white',border:'1px solid var(--line)',color:'var(--ink-2)' }} onClick={()=>setAmount(String(v))} disabled={offerLoading}>₪{v}</button>})}
+              </div>
+              <button className="btn btn-primary btn-block" onClick={submit} disabled={offerLoading}>{offerLoading ? 'Sending...' : 'Send offer'} · ₪{amount||'—'}</button>
+            </div>
+          </div>
+        </>
+      ):(
+        <div className="cta-bar">
+          <button className="btn btn-secondary" onClick={onBack}>Back</button>
+          <button className="btn btn-primary" onClick={()=>setOfferOpen(true)}>Make offer</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Deals Screen ─────────────────────────────────────────────────────────────
+function DealsScreen({ onNavigate, onToast, onUpdateBadge }) {
+  const [deals, setDeals] = useState([]);
+  const [activeTab, setActiveTab] = useState('negotiating');
+  const [openId, setOpenId] = useState(null);
+  const [filter, setFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch deals on mount (Phase 3.10: no fallback seed data)
+  useEffect(() => {
+    async function loadDeals() {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetchJSON('/api/deals');
+        // Combine all deal statuses and map them
+        const allDeals = [
+          ...(response.negotiating || []),
+          ...(response.matched || []),
+          ...(response.scheduled || []),
+        ];
+        const mappedDeals = allDeals.map(mapDeal);
+        setDeals(mappedDeals);
+        setLoading(false);
+      } catch (err) {
+        console.warn('Failed to fetch deals:', err);
+        setDeals([]);
+        setError(err.message || 'Failed to load deals');
+        setLoading(false);
+      }
+    }
+    loadDeals();
+
+    // Update countdown every minute for scheduled deals
+    const countdownInterval = setInterval(() => {
+      setDeals(ds => ds.map(d => {
+        if (d.status === 'scheduled' && d.meeting?.startTime) {
+          return {
+            ...d,
+            meeting: {
+              ...d.meeting,
+              countdown: computeCountdown(d.meeting.startTime),
+            },
+          };
+        }
+        return d;
+      }));
+    }, 60000); // Every minute
+
+    return () => clearInterval(countdownInterval);
+  }, []);
+
+  const filtered = useMemo(()=>deals.filter(d=>{
+    if (d.status!==activeTab) return false;
+    if (filter==='shared-con'&&!d.sharedCon?.shared) return false;
+    if (filter==='your-turn'&&d.turn!=='you') return false;
+    return true;
+  }),[deals,activeTab,filter]);
+
+  const counts = useMemo(()=>({ negotiating:deals.filter(d=>d.status==='negotiating').length, matched:deals.filter(d=>d.status==='matched').length, scheduled:deals.filter(d=>d.status==='scheduled').length }),[deals]);
+  const yourTurnCount = useMemo(()=>deals.filter(d=>d.turn==='you').length,[deals]);
+
+  // Update badge in parent when your turn count changes
+  useEffect(() => {
+    if (onUpdateBadge) {
+      onUpdateBadge(yourTurnCount);
+    }
+  }, [yourTurnCount, onUpdateBadge]);
+  const upd = (id,fn) => setDeals(ds=>ds.map(d=>d.id===id?fn(d):d));
+
+  const refetchDeal = async (dealId) => {
+    try {
+      const response = await fetchJSON(`/api/deals/${dealId}`);
+      const refreshedDeal = mapDeal(response.deal);
+      upd(dealId, () => refreshedDeal);
+      return refreshedDeal;
+    } catch (err) {
+      console.warn('Failed to refetch deal:', err);
+      throw err;
+    }
+  };
+
+  const handleCounter = async (id, amount) => {
+    await fetchJSON(`/api/deals/${id}/offer`, {
+      method: 'POST',
+      body: { price: amount }
+    });
+    await refetchDeal(id);
+    onToast(`Counter sent · ₪${amount.toLocaleString()}`);
+    setOpenId(null);
+  };
+
+  const handleAccept = async (id) => {
+    const deal = deals.find(d => d.id === id);
+    if (!deal || !deal.thread || deal.thread.length === 0) {
+      throw new Error('No active offer to accept');
+    }
+    // Get the last offer ID from the thread
+    const lastOffer = deal.thread[deal.thread.length - 1];
+    if (!lastOffer || !lastOffer.id) {
+      throw new Error('No offer ID found');
+    }
+
+    await fetchJSON(`/api/deals/${id}/accept/${lastOffer.id}`, {
+      method: 'POST',
+      body: {}
+    });
+    await refetchDeal(id);
+    onToast('Match confirmed · proposing window');
+    setOpenId(null);
+    setActiveTab('matched');
+  };
+
+  const handleWithdraw = async (id) => {
+    await fetchJSON(`/api/deals/${id}`, {
+      method: 'DELETE',
+      body: {}
+    });
+    setDeals(ds => ds.filter(d => d.id !== id));
+    onToast('Withdrawn');
+    setOpenId(null);
+  };
+
+  const handleConfirmTime = async (id) => {
+    try {
+      await refetchDeal(id);
+      onToast('Meetup scheduled · check in when ready');
+      setActiveTab('scheduled');
+    } catch (err) {
+      onToast('Failed to confirm time: ' + (err.message || 'unknown error'));
+    }
+  };
+
+  const handleProposeTime = async (id) => {
+    try {
+      await refetchDeal(id);
+      onToast('Window proposed · waiting for confirmation');
+      setOpenId(null);
+    } catch (err) {
+      onToast('Failed to propose time: ' + (err.message || 'unknown error'));
+    }
+  };
+
+  const handleCheckIn = async (id) => {
+    try {
+      await refetchDeal(id);
+      onToast('Checked in · partner will see this');
+    } catch (err) {
+      onToast('Failed to check in: ' + (err.message || 'unknown error'));
+    }
+  };
+  const openDeal = deals.find(d=>d.id===openId);
+
+  return (
+    <div style={{ display:'flex',flexDirection:'column',flex:1,overflow:'hidden' }}>
+      <div className="app-header">
+        <div className="app-title-row">
+          <div>
+            <div className="app-title">My Deals</div>
+            <div className="app-sub">{yourTurnCount>0?<><strong style={{ color:'var(--warn)' }}>{yourTurnCount} need you.</strong> <span className="serif" style={{ fontStyle:'italic' }}>Don't make them wait.</span></>:<span className="serif" style={{ fontStyle:'italic' }}>All caught up.</span>}</div>
+          </div>
+          <div className="profile-dot" onClick={()=>onNavigate('profile')}>{CURRENT_USER.initials}</div>
+        </div>
+      </div>
+      <div className="deal-tabs">
+        {['negotiating','matched','scheduled'].map(t=>(
+          <button key={t} className={`deal-tab ${activeTab===t?'active':''}`} onClick={()=>setActiveTab(t)}>
+            <span className="tab-count">{counts[t]}</span><span style={{ textTransform:'capitalize' }}>{t}</span>
+          </button>
+        ))}
+      </div>
+      <div className="filter-row">
+        <button className={`filter-chip ${filter==='all'?'active':''}`} onClick={()=>setFilter('all')}>All</button>
+        <button className={`filter-chip ${filter==='your-turn'?'active':''}`} onClick={()=>setFilter('your-turn')}>⚡ Your turn</button>
+        <button className={`filter-chip ${filter==='shared-con'?'active':''}`} onClick={()=>setFilter('shared-con')}>📅 Shared con</button>
+      </div>
+      <div className="screen">
+        {loading && (
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', flex:1, gap:12 }}>
+            <div style={{ width:40, height:40, borderRadius:'50%', border:'2px solid var(--line)', borderTopColor:'var(--ink)', animation:'spin 0.8s linear infinite' }}/>
+            <div style={{ fontSize:12, color:'var(--muted)' }}>Loading deals...</div>
+          </div>
+        )}
+        {error && deals.length === 0 && !loading && (
+          <div className="empty">
+            <div className="empty-mark"/>
+            <div className="empty-title">Failed to load deals</div>
+            <div className="empty-body">{error}</div>
+          </div>
+        )}
+        {!loading && (
+          <>
+            {yourTurnCount>0&&activeTab==='negotiating'&&filter!=='your-turn'&&(
+              <div className="turn-banner warn"><span className="pulse"/><span className="turn-banner-label">Your turn ×{yourTurnCount}</span><span className="turn-banner-text serif" style={{ fontStyle:'italic' }}>— don't make them wait.</span></div>
+            )}
+            {filtered.length===0&&<div className="empty"><div className="empty-mark"/><div className="empty-title" style={{ fontFamily:'Fraunces,serif' }}>Nothing here{activeTab==='negotiating'?filter==='your-turn'?" — you're all caught up.":'. Browse and make an offer.':'.'}</div><div className="empty-body">{activeTab==='negotiating'?'Browse the feed and make your first offer.':activeTab==='matched'?'Once both sides agree, deals appear here.':'Confirmed windows will appear here.'}</div></div>}
+            {filtered.map(d=>{
+          if (d.status==='negotiating') return (
+            <div key={d.id} className="deal-card" onClick={()=>setOpenId(d.id)}>
+              <div className="deal-card-top">
+                <div style={{ flex:1,minWidth:0 }}><div className="deal-card-card">{d.card.name}</div><div className="deal-card-meta">{d.card.set} · {d.card.printing}</div></div>
+                <div style={{ display:'flex',flexDirection:'column',alignItems:'flex-end',gap:6 }}>
+                  <div className="deal-price"><span className="deal-price-strike">₪{d.askPrice}</span>₪{d.currentOffer}</div>
+                  {d.turn==='you'&&<span className="pill pill-warn">⚡ Your turn</span>}
+                  {d.turn==='them'&&<span className="pill pill-muted">Their turn</span>}
+                </div>
+              </div>
+              <SharedCon con={d.sharedCon}/>
+              <Counterparty p={d.counterparty}/>
+              <div className="nego-thread">{d.thread.slice(-2).map((m,i)=><div key={i} className="nego-row"><span className="nego-actor">{m.actor==='you'?'YOU':'THEM'}</span><span className="nego-amount">₪{m.amount.toLocaleString()}</span><span className="nego-time">{m.t}</span></div>)}</div>
+            </div>
+          );
+          if (d.status==='matched') return (
+            <div key={d.id} className="deal-card" onClick={()=>setOpenId(d.id)}>
+              <div className="deal-card-top">
+                <div style={{ flex:1,minWidth:0 }}><div className="deal-card-card">{d.card.name}</div><div className="deal-card-meta">{d.card.set} · ₪{d.agreedPrice} agreed</div></div>
+                <div style={{ display:'flex',flexDirection:'column',alignItems:'flex-end',gap:6 }}>
+                  <span className="pill pill-good">✓ Matched</span>
+                  {d.turn==='you'&&<span className="pill pill-warn">⚡ Confirm window</span>}
+                  {d.turn==='them'&&<span className="pill pill-muted">Waiting</span>}
+                </div>
+              </div>
+              <SharedCon con={d.sharedCon}/>
+              <Counterparty p={d.counterparty}/>
+              {d.proposed&&<div className="meet-card"><div className="meet-row"><span className="meet-icon">📅</span><div><div className="meet-label">Window</div><div className="meet-val">{d.proposed.window} · {d.proposed.day}</div></div></div><div className="meet-row"><span className="meet-icon">📍</span><div><div className="meet-label">Where</div><div className="meet-val">{d.sharedCon.name}</div></div></div></div>}
+            </div>
+          );
+          if (d.status==='scheduled') return (
+            <div key={d.id} className="deal-card" onClick={()=>setOpenId(d.id)}>
+              <div className="deal-card-top">
+                <div style={{ flex:1,minWidth:0 }}><div className="deal-card-card">{d.card.name}</div><div className="deal-card-meta">{d.card.set} · ₪{d.agreedPrice}</div></div>
+                <div style={{ display:'flex',flexDirection:'column',alignItems:'flex-end',gap:6 }}>
+                  <span className="pill pill-good">📅 Scheduled</span>
+                  <span className="mono" style={{ fontSize:10,color:'var(--muted)' }}>in {d.meeting.countdown}</span>
+                </div>
+              </div>
+              <SharedCon con={d.sharedCon}/>
+              <Counterparty p={d.counterparty}/>
+              <div className="meet-card" style={{ marginTop:10 }}>
+                <div className="meet-row"><span className="meet-icon">📅</span><div><div className="meet-label">Committed window</div><div className="meet-val">{d.meeting.window}</div></div></div>
+                <div className="meet-row"><span className="meet-icon">📍</span><div><div className="meet-label">Where</div><div className="meet-val">{d.meeting.spot}</div></div></div>
+              </div>
+              {!d.meeting.checkedIn&&<button className="btn btn-primary btn-block" style={{ marginTop:10 }} onClick={e=>{e.stopPropagation();handleCheckIn(d.id);}}>I'm here — check in</button>}
+              {d.meeting.checkedIn&&<div style={{ marginTop:10,padding:'8px 12px',background:'var(--good-soft)',borderRadius:8,fontSize:12,color:'var(--good)',fontWeight:600,textAlign:'center' }}>✓ Checked in · waiting on partner</div>}
+            </div>
+          );
+          return null;
+        })}
+            <div style={{ height:24 }}/>
+          </>
+        )}
+      </div>
+      {openDeal&&(
+        <>
+          <div className="sheet-backdrop" onClick={()=>setOpenId(null)}/>
+          <DealDetailSheet deal={openDeal} onClose={()=>setOpenId(null)} onCounter={handleCounter} onAccept={handleAccept} onWithdraw={handleWithdraw} onConfirmTime={handleConfirmTime} onProposeTime={handleProposeTime} onCheckIn={handleCheckIn}/>
+        </>
+      )}
+    </div>
+  );
+}
+
+/**
+ * TimePickerModal — Display available time slots for a meetup.
+ * Fetches available slots from GET /api/meetups/available-slots.
+ */
+function TimePickerModal({ eventId, date, onSelect, onCancel, loading: parentLoading }) {
+  const [slots, setSlots] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+
+  useEffect(() => {
+    async function loadSlots() {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetchJSON(`/api/meetups/available-slots?eventId=${eventId}&date=${date.toISOString()}`);
+        setSlots(response.slots || []);
+      } catch (err) {
+        setError(err.message || 'Failed to load available slots');
+        setSlots([]);
+      }
+      setLoading(false);
+    }
+    if (eventId && date) {
+      loadSlots();
+    }
+  }, [eventId, date]);
+
+  const handleSelect = async (slot) => {
+    setSelectedSlot(slot);
+    try {
+      await onSelect(slot);
+    } catch (err) {
+      setError(err.message || 'Failed to select time');
+      setSelectedSlot(null);
+    }
+  };
+
+  const formatTime = (dateStr) => {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('en-IL', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  return (
+    <div className="sheet">
+      <div className="sheet-grab"/>
+      <div className="sheet-body">
+        <div className="sheet-header"><div style={{ flex:1 }}><div className="sheet-title">Choose time</div><div className="sheet-sub">30-minute window</div></div><button className="sheet-close" onClick={onCancel}>✕</button></div>
+        {error&&<div style={{ margin:'0 0 14px',padding:10,background:'var(--bad-soft)',borderRadius:6,color:'var(--bad)',fontSize:13,lineHeight:1.4 }}>{error}</div>}
+        <div className="sheet-section">
+          {loading&&<div style={{ textAlign:'center',padding:24,color:'var(--muted)',fontSize:13 }}>Loading available times...</div>}
+          {!loading&&slots.length===0&&<div style={{ textAlign:'center',padding:24,color:'var(--muted)',fontSize:13 }}>No available slots for this date</div>}
+          {!loading&&slots.length>0&&(
+            <>
+              <div className="sheet-section-label">Available times</div>
+              <div className="time-slot-grid">
+                {slots.map((slot, i) => (
+                  <button
+                    key={i}
+                    className={`time-slot-btn ${selectedSlot===slot?'selected':''}`}
+                    onClick={() => handleSelect(slot)}
+                    disabled={parentLoading}
+                  >
+                    {formatTime(slot.startTime)}<br/><span style={{ fontSize:'10px',opacity:0.7 }}>–{formatTime(slot.endTime)}</span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DealDetailSheet({ deal, onClose, onCounter, onAccept, onWithdraw, onConfirmTime, onProposeTime, onCheckIn }) {
+  const [counterAmt, setCounterAmt] = useState(String(deal.status==='negotiating'?deal.currentOffer+10:''));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [meetupLoading, setMeetupLoading] = useState(false);
+  const isNego=deal.status==='negotiating', isMatched=deal.status==='matched', isSched=deal.status==='scheduled';
+
+  const handleCounter = async () => {
+    const amount = Number(counterAmt);
+    if (!amount || amount <= 0) {
+      setError('Enter a valid price');
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      await onCounter(deal.id, amount);
+    } catch (err) {
+      setError(err.message || 'Counter failed');
+    }
+    setLoading(false);
+  };
+
+  const handleAcceptClick = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await onAccept(deal.id);
+    } catch (err) {
+      setError(err.message || 'Accept failed');
+    }
+    setLoading(false);
+  };
+
+  const handleWithdrawClick = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await onWithdraw(deal.id);
+    } catch (err) {
+      setError(err.message || 'Withdraw failed');
+    }
+    setLoading(false);
+  };
+
+  const handleProposeTimeClick = () => {
+    setShowTimePicker(true);
+  };
+
+  const handleSelectTime = async (slot) => {
+    setMeetupLoading(true);
+    setError(null);
+    try {
+      // Get eventId from sharedEventIds (use first one)
+      const eventId = deal.sharedEventIds && deal.sharedEventIds[0];
+      if (!eventId) {
+        throw new Error('No shared event found for scheduling');
+      }
+
+      // POST /api/meetups with dealId, eventId, startTime, endTime
+      const response = await fetchJSON('/api/meetups', {
+        method: 'POST',
+        body: {
+          dealId: deal.id,
+          eventId: eventId,
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          locationNote: deal.sharedCon?.name,
+        },
+      });
+
+      // Close time picker and update parent
+      setShowTimePicker(false);
+      onProposeTime(deal.id);
+    } catch (err) {
+      setError(err.message || 'Failed to propose time');
+    }
+    setMeetupLoading(false);
+  };
+
+  const handleConfirmWindow = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Find the meetup ID: check meeting first, then proposed
+      let meetupId = null;
+      if (deal.meeting && deal.meeting.id) {
+        meetupId = deal.meeting.id;
+      } else if (deal.proposed && deal.proposed.id) {
+        meetupId = deal.proposed.id;
+      }
+
+      if (!meetupId) {
+        throw new Error('No meetup found to confirm');
+      }
+
+      // Determine if current user is buyer
+      const currentUserId = getCurrentUserId();
+      const isBuyer = deal.buyerId === currentUserId;
+
+      // PUT /api/meetups/:id/confirm with isBuyer flag
+      await fetchJSON(`/api/meetups/${meetupId}/confirm`, {
+        method: 'PUT',
+        body: { isBuyer },
+      });
+
+      onConfirmTime(deal.id);
+    } catch (err) {
+      setError(err.message || 'Failed to confirm window');
+    }
+    setLoading(false);
+  };
+
+  const handleCheckInClick = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      if (!deal.meeting || !deal.meeting.id) {
+        throw new Error('No meetup found to check in to');
+      }
+
+      // POST /api/meetups/:id/checkin
+      await fetchJSON(`/api/meetups/${deal.meeting.id}/checkin`, {
+        method: 'POST',
+        body: {},
+      });
+
+      onCheckIn(deal.id);
+    } catch (err) {
+      setError(err.message || 'Failed to check in');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <>
+    <div className="sheet">
+      <div className="sheet-grab"/>
+      <div className="sheet-body">
+        <div className="sheet-header"><div style={{ flex:1 }}><div className="sheet-title">{deal.card.name}</div><div className="sheet-sub">{deal.card.set} · {deal.card.printing}</div></div><button className="sheet-close" onClick={onClose}>✕</button></div>
+        {error&&<div style={{ margin:'0 0 14px',padding:10,background:'var(--bad-soft)',borderRadius:6,color:'var(--bad)',fontSize:13,lineHeight:1.4 }}>{error}</div>}
+        {deal.turn==='you'&&<div className="turn-banner warn" style={{ margin:'0 0 14px' }}><span className="pulse"/><span className="turn-banner-label">Your turn</span><span className="turn-banner-text">{isNego?'Counter, accept, or withdraw.':isMatched?'Confirm the proposed window.':''}</span></div>}
+        {deal.turn==='them'&&<div className="turn-banner muted" style={{ margin:'0 0 14px' }}><span className="turn-banner-label">Waiting on {deal.counterparty.name.split(' ')[0]}</span></div>}
+        <div className="sheet-section"><div className="sheet-section-label">Counterparty</div><Counterparty p={deal.counterparty}/><div style={{ marginTop:12 }}><SharedCon con={deal.sharedCon}/></div></div>
+        {isNego&&(
+          <div className="sheet-section">
+            <div className="sheet-section-label">Thread · Asking ₪{deal.askPrice}</div>
+            <div className="thread">{deal.thread.map((m,i)=><div key={i} className={`thread-row ${m.actor==='you'?'you':''}`}><span className="thread-actor">{m.actor==='you'?'You':deal.counterparty.name.split(' ')[0]}</span><span className="thread-amount">₪{m.amount.toLocaleString()}</span><span className="thread-time">{m.t}</span></div>)}</div>
+            {deal.turn==='you'&&<><div className="counter-input-row"><input className="counter-input" value={counterAmt} onChange={e=>setCounterAmt(e.target.value.replace(/[^\d]/g,''))} placeholder="₪" disabled={loading}/><button className="btn btn-primary" onClick={handleCounter} disabled={loading}>{loading?'Sending...':'Counter'}</button></div><div className="action-row" style={{ marginTop:10 }}><button className="btn btn-secondary" onClick={handleAcceptClick} disabled={loading}>Accept ₪{deal.currentOffer}</button><button className="btn btn-bad" onClick={handleWithdrawClick} disabled={loading}>{loading?'...':'Withdraw'}</button></div></>}
+          </div>
+        )}
+        {isMatched&&(
+          <div className="sheet-section">
+            <div className="sheet-section-label">Agreed · Propose window</div>
+            <div className="meeting-card">
+              <div className="meeting-row"><div className="meeting-row-icon">₪</div><div className="meeting-row-info"><div className="meeting-row-label">Price</div><div className="meeting-row-value">₪{deal.agreedPrice || deal.currentOffer}</div></div></div>
+              <div className="meeting-row"><div className="meeting-row-icon">📍</div><div className="meeting-row-info"><div className="meeting-row-label">At event</div><div className="meeting-row-value">{deal.sharedCon?.name || 'TBD'}</div></div></div>
+            </div>
+            {deal.proposed&&(
+              <div style={{ marginTop:14, padding:'12px', background:'var(--accent-soft)', borderRadius:10 }}>
+                <div style={{ fontSize:11, color:'var(--accent)', fontFamily:'JetBrains Mono,monospace', letterSpacing:'.1em', textTransform:'uppercase', fontWeight:600, marginBottom:8 }}>Proposed window</div>
+                <div style={{ fontSize:13, fontWeight:600, marginBottom:2 }}>{deal.proposed.window}</div>
+                <div style={{ fontSize:12, color:'var(--muted)' }}>{deal.proposed.day} · {deal.proposed.spot}</div>
+                {deal.turn==='you'&&<button className="btn btn-primary" style={{ marginTop:10, width:'100%' }} onClick={handleConfirmWindow} disabled={loading||meetupLoading}>{meetupLoading?'Confirming...':'Confirm meeting time'}</button>}
+              </div>
+            )}
+            {deal.turn==='you'&&!deal.proposed&&<div className="action-row" style={{ marginTop:14 }}><button className="btn btn-primary btn-block" onClick={handleProposeTimeClick} disabled={loading||meetupLoading}>Propose time window</button><button className="btn btn-bad" onClick={handleWithdrawClick} disabled={loading}>{loading?'...':'Withdraw'}</button></div>}
+            {deal.turn==='them'&&<div className="action-row" style={{ marginTop:14 }}><button className="btn btn-bad" onClick={handleWithdrawClick} disabled={loading}>{loading?'...':'Withdraw'}</button></div>}
+          </div>
+        )}
+        {isSched&&(
+          <div className="sheet-section">
+            <div className="sheet-section-label">Committed window</div>
+            <div className="meeting-card">
+              <div className="meeting-row"><div className="meeting-row-icon">📅</div><div className="meeting-row-info"><div className="meeting-row-label">When</div><div className="meeting-row-value">{deal.meeting?.startTime?formatTime(deal.meeting.startTime):'TBD'}</div><div className="meeting-row-detail">in {deal.meeting?.countdown||'–'}</div></div></div>
+              <div className="meeting-row"><div className="meeting-row-icon">📍</div><div className="meeting-row-info"><div className="meeting-row-label">Where</div><div className="meeting-row-value">{deal.sharedCon?.name || 'TBD'}</div></div></div>
+              <div className="meeting-row"><div className="meeting-row-icon">₪</div><div className="meeting-row-info"><div className="meeting-row-label">Cash on meet</div><div className="meeting-row-value">₪{deal.agreedPrice||deal.currentOffer}</div></div></div>
+            </div>
+            <div className="action-row" style={{ marginTop:14 }}>
+              {!deal.meeting?.buyerCheckedIn&&!deal.meeting?.sellerCheckedIn?<button className="btn btn-primary btn-block" onClick={handleCheckInClick} disabled={loading}>I'm here — check in</button>:<button className="btn btn-secondary btn-block" disabled>✓ Checked in</button>}
+            </div>
+            <div style={{ marginTop:10,textAlign:'center' }}><button style={{ background:'transparent',border:'none',color:'var(--bad)',textDecoration:'underline',fontSize:12,cursor:'pointer',padding:4 }} onClick={handleWithdrawClick} disabled={loading}>Cancel meetup</button></div>
+          </div>
+        )}
+      </div>
+    </div>
+    {showTimePicker&&(
+      <>
+        <div className="sheet-backdrop" onClick={()=>setShowTimePicker(false)}/>
+        <TimePickerModal eventId={deal.sharedEventIds?.[0]} date={new Date()} onSelect={handleSelectTime} onCancel={()=>setShowTimePicker(false)} loading={meetupLoading}/>
+      </>
+    )}
+    </>
+  );
+}
+
+// ─── Profile Screen ───────────────────────────────────────────────────────────
+function ProfileScreen({ onNavigate }) {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Editing state
+  const [editingGames, setEditingGames] = useState(false);
+  const [selectedGames, setSelectedGames] = useState([]);
+  const [editingRadius, setEditingRadius] = useState(false);
+  const [selectedRadius, setSelectedRadius] = useState(30);
+  const [savingGames, setSavingGames] = useState(false);
+  const [savingRadius, setSavingRadius] = useState(false);
+
+  // Load profile on mount (Phase 3.10: keep CURRENT_USER for display fallback only)
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchProfile();
+        if (!data) {
+          setError('Failed to load profile');
+          setProfile(CURRENT_USER); // Display fallback for hero section
+          setSelectedGames(CURRENT_USER.games.map(g => displayToGameCode(g)));
+          setSelectedRadius(CURRENT_USER.radius);
+        } else {
+          setProfile(data);
+          setSelectedGames(data.games.map(g => displayToGameCode(g)));
+          setSelectedRadius(data.radius);
+        }
+      } catch (err) {
+        console.error('Error loading profile:', err);
+        setError('Failed to load profile');
+        setProfile(CURRENT_USER); // Display fallback for hero section
+        setSelectedGames(CURRENT_USER.games.map(g => displayToGameCode(g)));
+        setSelectedRadius(CURRENT_USER.radius);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const u = profile || CURRENT_USER;
+  const allGames = ['mtg', 'pokemon', 'yugioh', 'lorcana'];
+
+  const toggleGame = (gameCode) => {
+    setSelectedGames(prev =>
+      prev.includes(gameCode)
+        ? prev.filter(x => x !== gameCode)
+        : [...prev, gameCode]
+    );
+  };
+
+  const handleSaveGames = async () => {
+    setSavingGames(true);
+    try {
+      await fetchJSON('/api/profile', {
+        method: 'PUT',
+        body: { games: selectedGames },
+      });
+      // Update profile with new games
+      const newProfile = { ...profile, games: selectedGames.map(g => gameDisplayName(g)) };
+      setProfile(newProfile);
+      setEditingGames(false);
+    } catch (err) {
+      console.error('Error saving games:', err);
+      setError('Failed to save games');
+    } finally {
+      setSavingGames(false);
+    }
+  };
+
+  const handleCancelGames = () => {
+    setSelectedGames(profile ? profile.games.map(g => displayToGameCode(g)) : CURRENT_USER.games.map(g => displayToGameCode(g)));
+    setEditingGames(false);
+  };
+
+  const handleSaveRadius = async () => {
+    setSavingRadius(true);
+    try {
+      await fetchJSON('/api/profile', {
+        method: 'PUT',
+        body: { travelRadiusKm: selectedRadius },
+      });
+      // Update profile with new radius
+      const newProfile = { ...profile, radius: selectedRadius };
+      setProfile(newProfile);
+      setEditingRadius(false);
+    } catch (err) {
+      console.error('Error saving radius:', err);
+      setError('Failed to save radius');
+    } finally {
+      setSavingRadius(false);
+    }
+  };
+
+  const handleCancelRadius = () => {
+    setSelectedRadius(profile ? profile.radius : CURRENT_USER.radius);
+    setEditingRadius(false);
+  };
+
+  const handleSignOut = () => {
+    clearToken();
+    onNavigate('login');
+  };
+
+  if (loading) {
+    return (
+      <div className="screen" style={{ display:'flex', alignItems:'center', justifyContent:'center' }}>
+        <div style={{ textAlign:'center', color:'var(--muted)' }}>Loading profile...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="screen">
+      {error && !profile && (
+        <div className="empty" style={{ marginTop: '48px' }}>
+          <div className="empty-mark"/>
+          <div className="empty-title">Failed to load profile</div>
+          <div className="empty-body">{error}</div>
+        </div>
+      )}
+
+      <div className="profile-hero">
+        <div className="profile-avatar-big">{u.initials}</div>
+        <div className="profile-name">{u.name}</div>
+        <div className="profile-handle">member since May 2026</div>
+        <div className="profile-stars">★★★★★</div>
+        <div style={{ fontSize:11,color:'var(--muted)',marginTop:4,fontFamily:'JetBrains Mono,monospace',letterSpacing:'.08em' }}>{(parseFloat(u?.rating) || 0).toFixed(1)} rating · {parseInt(u?.noShows) || 0} no-shows</div>
+      </div>
+
+      <div className="profile-mini-stats">
+        <div className="profile-mini-cell"><div className="profile-mini-num">{u.deals}</div><div className="profile-mini-label">Completed</div></div>
+        <div className="profile-mini-cell"><div className="profile-mini-num">{parseInt(u?.noShows) || 0}</div><div className="profile-mini-label">No-shows</div></div>
+        <div className="profile-mini-cell"><div className="profile-mini-num">{(parseFloat(u?.rating) || 0).toFixed(1)}</div><div className="profile-mini-label">Rating</div></div>
+      </div>
+
+      <div className="profile-section-label">Games</div>
+      {!editingGames ? (
+        <div>
+          <div style={{ padding:'0 20px 12px',display:'flex',flexWrap:'wrap',gap:8 }}>
+            {u.games.map(g=>(
+              <span key={g} className="game-chip on" style={{ fontSize:12,padding:'7px 12px' }}>{g}</span>
+            ))}
+          </div>
+          <div style={{ padding:'0 20px 16px' }}>
+            <button className="btn btn-secondary" style={{ fontSize:12, width:'100%' }} onClick={() => setEditingGames(true)} disabled={savingGames}>Edit games</button>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div style={{ padding:'0 20px 12px',display:'flex',flexWrap:'wrap',gap:8 }}>
+            {allGames.map(g=>(
+              <button key={g} className={`game-chip ${selectedGames.includes(g)?'on':''}`} style={{ fontSize:12,padding:'7px 12px' }} onClick={()=>toggleGame(g)} disabled={savingGames}>{gameDisplayName(g)}</button>
+            ))}
+          </div>
+          <div style={{ padding:'0 20px 16px', display:'flex', gap:8 }}>
+            <button className="btn btn-primary" style={{ flex:1, fontSize:12 }} onClick={handleSaveGames} disabled={savingGames}>Save</button>
+            <button className="btn btn-secondary" style={{ flex:1, fontSize:12 }} onClick={handleCancelGames} disabled={savingGames}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      <div className="profile-section-label">Account</div>
+      <div className="profile-row"><div className="profile-row-label">Location</div><div className="profile-row-value">{u.location}</div></div>
+
+      {!editingRadius ? (
+        <div>
+          <div className="profile-row"><div className="profile-row-label">Travel radius</div><div className="profile-row-value">{u.radius} km</div></div>
+          <div style={{ padding:'0 20px 12px' }}>
+            <button className="btn btn-secondary" style={{ fontSize:12, width:'100%' }} onClick={() => setEditingRadius(true)} disabled={savingRadius}>Edit radius</button>
+          </div>
+        </div>
+      ) : (
+        <div style={{ padding:'16px 20px', background:'white', borderBottom:'1px solid var(--line)' }}>
+          <label style={{ fontSize:12, color:'var(--muted)', fontFamily:'JetBrains Mono,monospace', textTransform:'uppercase', letterSpacing:'.08em', display:'block', marginBottom:8 }}>Travel radius: {selectedRadius} km</label>
+          <input type="range" min="5" max="100" value={selectedRadius} onChange={(e) => setSelectedRadius(parseInt(e.target.value))} style={{ width:'100%', marginBottom:12 }} disabled={savingRadius}/>
+          <div style={{ display:'flex', gap:8 }}>
+            <button className="btn btn-primary" style={{ flex:1, fontSize:12 }} onClick={handleSaveRadius} disabled={savingRadius}>Save</button>
+            <button className="btn btn-secondary" style={{ flex:1, fontSize:12 }} onClick={handleCancelRadius} disabled={savingRadius}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      <div className="profile-row"><div className="profile-row-label">Email</div><div className="profile-row-value">{u.email}</div></div>
+
+      <div className="profile-section-label">Activity</div>
+      <div className="profile-row"><div className="profile-row-label">Deal history</div><div className="profile-row-value">{u.deals} deals</div></div>
+      <div className="profile-row"><div className="profile-row-label">Upcoming meetups</div><div className="profile-row-value">1 scheduled</div></div>
+      <div className="profile-row"><div className="profile-row-label">Active listings</div><div className="profile-row-value">3 active</div></div>
+
+      <div className="profile-section-label">Support</div>
+      <div className="profile-row" onClick={handleSignOut}><div className="profile-row-label" style={{ color:'var(--bad)' }}>Sign out</div><div className="profile-row-value"/></div>
+      <div style={{ height:32 }}/>
+    </div>
+  );
+}
+
+// ─── Root App ─────────────────────────────────────────────────────────────────
+function CardMeetApp() {
+  const [auth, setAuth] = useState(false);     // false = not logged in
+  const [onboarded, setOnboarded] = useState(false);
+  const [tab, setTab] = useState('calendar');  // calendar | browse | deals | profile
+  const [subScreen, setSubScreen] = useState(null); // { name, data }
+  const [toast, setToast] = useState(null);
+  const [dealBadge, setDealBadge] = useState(0); // Track badge count from DealsScreen
+
+  const showToast = msg => { setToast(msg); setTimeout(()=>setToast(null), 2600); };
+  const navigate = (to, data) => {
+    if (to==='login') { setAuth(false); setSubScreen(null); return; }
+    if (['calendar','browse','deals','profile'].includes(to)) { setTab(to); setSubScreen(null); return; }
+    setSubScreen({ name:to, data });
+  };
+
+  if (!auth) return (
+    <div className="phone">
+      <StatusBar/>
+      <LoginScreen onLogin={() => setAuth(true)}/>
+    </div>
+  );
+  if (!onboarded) return (
+    <div className="phone">
+      <StatusBar/>
+      <OnboardingScreen onDone={()=>setOnboarded(true)}/>
+    </div>
+  );
+
+  let content = null;
+  if (subScreen?.name==='listing') {
+    content = <ListingScreen listingId={subScreen.data} onBack={()=>setSubScreen(null)} onMakeOffer={(listingId, amt)=>{ showToast(`Offer sent · ₪${amt.toLocaleString()}`); setSubScreen(null); navigate('deals'); }} onToast={showToast}/>;
+  } else if (tab==='calendar') {
+    content = <CalendarScreen onNavigate={navigate}/>;
+  } else if (tab==='browse') {
+    content = <BrowseScreen onNavigate={navigate}/>;
+  } else if (tab==='deals') {
+    content = <DealsScreen onNavigate={navigate} onToast={showToast} onUpdateBadge={setDealBadge}/>;
+  } else if (tab==='profile') {
+    content = <ProfileScreen onNavigate={navigate}/>;
+  }
+
+  return (
+    <div className="phone">
+      <StatusBar/>
+      <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', position:'relative' }}>
+        {content}
+        {toast&&<Toast msg={toast}/>}
+      </div>
+      {!subScreen&&(
+        <div className="tabbar">
+          {[
+            { id:'calendar', label:'Calendar', icon:'▦' },
+            { id:'browse', label:'Browse', icon:'◈' },
+            { id:'deals', label:'Deals', icon:'◉', badge:dealBadge },
+            { id:'profile', label:'Profile', icon:'◎' },
+          ].map(t=>(
+            <button key={t.id} className={`tabbar-btn ${tab===t.id?'active':''}`} onClick={()=>navigate(t.id)}>
+              <span style={{ fontSize:18,lineHeight:1 }}>{t.icon}</span>
+              {t.badge>0&&<span className="tabbar-badge">{t.badge}</span>}
+              <span>{t.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.render(<CardMeetApp />, document.getElementById('root'));
+</script>
+</body>
+</html>

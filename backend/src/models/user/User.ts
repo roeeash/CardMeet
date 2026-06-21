@@ -1,14 +1,19 @@
-import { Knex } from 'knex';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { BaseModel } from '../BaseModel';
 import { User, UserProfile } from '@shared/types/user';
 
+type UserRow = User & { password_hash: string };
+
 export class UserModel extends BaseModel {
   static tableName = 'users';
 
-  static async findByEmail(email: string): Promise<User | null> {
+  static async findByEmail(email: string): Promise<UserRow | null> {
     return this.db(this.tableName).where('email', email).first();
+  }
+
+  static async findById(id: string): Promise<UserRow | null> {
+    return this.db(this.tableName).where('id', id).first();
   }
 
   static async create(userData: {
@@ -27,7 +32,7 @@ export class UserModel extends BaseModel {
     return user;
   }
 
-  static async verifyPassword(email: string, password: string): Promise<User | null> {
+  static async verifyPassword(email: string, password: string): Promise<UserRow | null> {
     const user = await this.findByEmail(email);
     if (!user) return null;
 
@@ -100,15 +105,17 @@ export class UserProfileModel extends BaseModel {
     radiusKm: number,
     games: string[] = []
   ): Promise<UserProfile[]> {
+    // MVP: Use simple lat/lng range checks instead of PostGIS
+    // Phase 3 will implement precise geographic distance calculations
+    const latDelta = radiusKm / 111; // Approx km per degree latitude
+    const lngDelta = radiusKm / (111 * Math.cos(lat * Math.PI / 180)); // Approx km per degree longitude
+
     const query = this.db(this.tableName)
       .select('*')
-      .whereRaw(`
-        ST_DWithin(
-          ST_Point(location_lng, location_lat)::geography,
-          ST_Point(?, ?)::geography,
-          ?
-        )
-      `, [lng, lat, radiusKm * 1000]); // Convert km to meters
+      .where('location_lat', '>=', lat - latDelta)
+      .where('location_lat', '<=', lat + latDelta)
+      .where('location_lng', '>=', lng - lngDelta)
+      .where('location_lng', '<=', lng + lngDelta);
 
     if (games.length > 0) {
       query.whereRaw('games && ?', [games]);

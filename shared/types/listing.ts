@@ -2,18 +2,18 @@ import { Game } from './user';
 
 export interface Listing {
   id: string;
-  sellerId: string;
-  cardName: string;
-  cardSet?: string;
+  seller_id: string;
+  card_name: string;
+  card_set?: string;
   condition: CardCondition;
-  priceCents: number;
+  price_cents: number;
   currency: string;
-  imageUrl?: string;
+  image_url?: string;
   description?: string;
   game: Game;
   status: ListingStatus;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export type CardCondition = 'nm' | 'lp' | 'mp' | 'hp';

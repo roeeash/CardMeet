@@ -1,6 +1,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  maxWorkers: 1,
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
     '**/__tests__/**/*.ts',
@@ -15,7 +16,7 @@ module.exports = {
     '!src/migrations/**',
     '!src/seeds/**',
   ],
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@controllers/(.*)$': '<rootDir>/src/controllers/$1',
     '^@services/(.*)$': '<rootDir>/src/services/$1',
     '^@models/(.*)$': '<rootDir>/src/models/$1',
@@ -23,6 +24,8 @@ module.exports = {
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
     '^@config/(.*)$': '<rootDir>/src/config/$1',
     '^@types/(.*)$': '<rootDir>/src/types/$1',
+    '^@routes/(.*)$': '<rootDir>/src/routes/$1',
+    '^@shared/(.*)$': '<rootDir>/../shared/$1',
   },
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
 };

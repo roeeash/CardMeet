@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon --exec 'ts-node -r tsconfig-paths/register' src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "bash start.sh",
     "test": "jest",
     "test:watch": "jest --watch",
     "db:init": "ts-node -r tsconfig-paths/register src/scripts/init-database.ts",

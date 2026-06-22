@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "CardMeet backend API server",
   "main": "dist/backend/src/app.js",
-  "engines": { "node": ">=18.0.0" },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "nodemon --exec 'ts-node -r tsconfig-paths/register' src/index.ts",
     "build": "tsc",
@@ -45,14 +47,14 @@
     "winston": "^3.9.0"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.0",
-    "@types/express": "^4.17.0",
+    "@types/express": "^4.17.25",
     "@types/jest": "^29.5.0",
-    "@types/jsonwebtoken": "^9.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^1.4.0",
-    "@types/node": "^20.4.0",
-    "@types/pg": "^8.10.0",
+    "@types/node": "^20.19.43",
+    "@types/pg": "^8.20.0",
     "@types/supertest": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",

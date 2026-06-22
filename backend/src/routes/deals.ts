@@ -1,9 +1,9 @@
 import { Router, Response } from 'express';
-import { DealService } from '../services/DealService';
-import { authenticate, AuthRequest } from '../middleware/auth';
-import { getStatusCode, formatErrorResponse } from '../utils/errorHandler';
-import { validateRequest, createDealSchema, makeOfferSchema } from '../middleware/validation';
-import { dealToDTO, dealGroupToDTO, offerToDTO } from '../utils/dto';
+import { DealService } from '@services/DealService';
+import { authenticate, AuthRequest } from '@middleware/auth';
+import { getStatusCode, formatErrorResponse } from '@utils/errorHandler';
+import { validateRequest, createDealSchema, makeOfferSchema } from '@middleware/validation';
+import { dealToDTO, dealGroupToDTO, offerToDTO } from '@utils/dto';
 
 const router = Router();
 

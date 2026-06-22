@@ -1,4 +1,4 @@
-import { checkDatabaseHealth } from '../utils/databaseHealth';
+import { checkDatabaseHealth } from '@utils/databaseHealth';
 
 (async () => {
   const result = await checkDatabaseHealth();

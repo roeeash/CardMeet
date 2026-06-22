@@ -1,7 +1,7 @@
-import { DealModel } from '../models/deal/Deal';
-import { OfferModel } from '../models/deal/Offer';
-import { ListingModel } from '../models/listing/Listing';
-import { EventModel } from '../models/event/Event';
+import { DealModel } from '@models/deal/Deal';
+import { OfferModel } from '@models/deal/Offer';
+import { ListingModel } from '@models/listing/Listing';
+import { EventModel } from '@models/event/Event';
 
 export class DealService {
   static async createDeal(buyerId: string, listingId: string, initialOfferCents: number) {

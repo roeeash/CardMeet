@@ -1,5 +1,5 @@
 import { BaseModel } from '../BaseModel';
-import { Meetup, MeetupStatus } from '../../shared/types/meetup';
+import { Meetup, MeetupStatus } from '@shared/types/meetup';
 
 export class MeetupModel extends BaseModel {
   static tableName = 'meetups';

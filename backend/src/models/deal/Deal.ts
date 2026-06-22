@@ -1,5 +1,5 @@
 import { BaseModel } from '../BaseModel';
-import { Deal, DealStatus } from '../../shared/types/deal';
+import { Deal, DealStatus } from '@shared/types/deal';
 
 export class DealModel extends BaseModel {
   static tableName = 'deals';

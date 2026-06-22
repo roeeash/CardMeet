@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: cardmeet
+    runtime: node
+    plan: free
+    buildCommand: cd backend && npm ci && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+
+  - type: postgres
+    name: cardmeet-db
+    plan: free
+    ipAllowList: []
+
+databases:
+  - name: cardmeet-db
+    databaseName: cardmeet
+    user: postgres

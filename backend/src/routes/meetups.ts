@@ -1,10 +1,10 @@
 import { Router, Response } from 'express';
-import { MeetupService } from '@services/MeetupService';
-import { MeetupModel } from '@models/meetup/Meetup';
-import { authenticate, AuthRequest } from '@middleware/auth';
-import { getStatusCode, formatErrorResponse } from '@utils/errorHandler';
-import { validateRequest, scheduleMeetupSchema } from '@middleware/validation';
-import { meetupToDTO } from '@utils/dto';
+import { MeetupService } from '../services/MeetupService';
+import { MeetupModel } from '../models/meetup/Meetup';
+import { authenticate, AuthRequest } from '../middleware/auth';
+import { getStatusCode, formatErrorResponse } from '../utils/errorHandler';
+import { validateRequest, scheduleMeetupSchema } from '../middleware/validation';
+import { meetupToDTO } from '../utils/dto';
 
 const router = Router();
 

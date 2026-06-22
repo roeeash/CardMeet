@@ -1,5 +1,5 @@
 import { BaseModel } from '../BaseModel';
-import { Offer } from '@shared/types/offer';
+import { Offer } from '../../../../shared/types/offer';
 
 export class OfferModel extends BaseModel {
   static tableName = 'offers';

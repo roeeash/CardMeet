@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { AuthService } from '@services/AuthService';
-import { authenticate, AuthRequest } from '@middleware/auth';
-import { getStatusCode, formatErrorResponse } from '@utils/errorHandler';
-import { validateRequest, registerSchema, loginSchema, refreshSchema } from '@middleware/validation';
-import { authResponseToDTO } from '@utils/dto';
+import { AuthService } from '../services/AuthService';
+import { authenticate, AuthRequest } from '../middleware/auth';
+import { getStatusCode, formatErrorResponse } from '../utils/errorHandler';
+import { validateRequest, registerSchema, loginSchema, refreshSchema } from '../middleware/validation';
+import { authResponseToDTO } from '../utils/dto';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
-import { EventModel, EventRSVPModel } from '@models/event/Event';
-import { UserProfileModel } from '@models/user/User';
-import { RSVPStatus } from '@shared/types/event';
+import { EventModel, EventRSVPModel } from '../models/event/Event';
+import { UserProfileModel } from '../models/user/User';
+import { RSVPStatus } from '../../../shared/types/event';
 
 export class EventService {
   static async findEventsForUser(userId: string) {

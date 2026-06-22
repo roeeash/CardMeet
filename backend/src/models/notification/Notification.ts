@@ -1,5 +1,5 @@
 import { BaseModel } from '../BaseModel';
-import type { Notification, NotificationType } from '@shared/types/notification';
+import type { Notification, NotificationType } from '../../../../shared/types/notification';
 
 export class NotificationModel extends BaseModel {
   static tableName = 'notifications';

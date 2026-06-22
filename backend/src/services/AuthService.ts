@@ -1,5 +1,5 @@
 import { sign } from 'jsonwebtoken';
-import { UserModel } from '@models/user/User';
+import { UserModel } from '../models/user/User';
 
 export class AuthService {
   static async register(email: string, password: string) {

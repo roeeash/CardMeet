@@ -1,5 +1,5 @@
-import { UserModel, UserProfileModel } from '@models/user/User';
-import type { User, UserProfile } from '@shared/types/user';
+import { UserModel, UserProfileModel } from '../models/user/User';
+import type { User, UserProfile } from '../../../shared/types/user';
 
 type UserRow = User & { password_hash: string };
 
